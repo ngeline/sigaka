@@ -1,3 +1,3 @@
 ###################
-Sistem Informasi Penggajian Selkom Group
+Sistem Informasi Penggajian Koperasi
 ###################
