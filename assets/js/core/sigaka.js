@@ -28,6 +28,12 @@ $(document).ready(function () {
 		theme: 'bootstrap-5'
 	});
 
+	$('.select2-validasi').select2({
+		placeholder: '- Pilih opsi -',
+		dropdownParent: $('#validasi'),
+		theme: 'bootstrap-5'
+	});
+
 	// ------------------------------------------------------------------------------------------
 	// End Default Sigaka
 	// ------------------------------------------------------------------------------------------
@@ -531,6 +537,26 @@ $(document).ready(function () {
 		});
 	});
 
+	$(document).on('click', '.pinjaman-validasi', function (e) {
+		e.preventDefault();
+		var id = $(this).data('id');
+		var getUrl = root + 'pinjaman/edit/' + id;
+		$.ajax({
+			url : getUrl,
+			type : 'ajax',
+			dataType : 'json',
+			success: function (response) {
+				if (response != null){
+					$('#id_validasi').val(response.data.pinjaman_id);
+					$('#pinjaman_validasi_nama').val(response.data.karyawan_id);
+				}
+			},
+			error: function (response) {
+				console.log(response.status + 'error');
+			}
+		});
+	});
+
 	// ------------------------------------------------------------------------------------------
 	// End JS Pinjaman
 	// ------------------------------------------------------------------------------------------
@@ -641,11 +667,11 @@ $(document).ready(function () {
 		window.location.href = '/sigaka/storting';
 	});
 
-	$(document).on('change', '.storting-riwayat-month-picker', function (e) {
-		var date = $(this).val();
-		var id = $('.data-storting-riwayat').data('id');
-		window.location.href = '/sigaka/storting/riwayat?month=' + date + '&id=' + id;
-	})
+	// $(document).on('change', '.storting-riwayat-month-picker', function (e) {
+	// 	var date = $(this).val();
+	// 	var id = $('.data-storting-riwayat').data('id');
+	// 	window.location.href = '/sigaka/storting/riwayat?month=' + date + '&id=' + id;
+	// })
 
 	$(document).on('click', '.storting-riwayat-edit', function (e) {
 		e.preventDefault();
@@ -700,25 +726,8 @@ $(document).ready(function () {
 	// ------------------------------------------------------------------------------------------
 
 	$(document).on('change', '.gaji-month-picker', function (e) {
-		// var url = $(this).val();
-		// window.location.href = '/sigaka/gaji?month=' + url;
-		fetch('https://serpapi.com/search.json?engine=google_images&q=SALBUTAMOL%202MG%20TAB%20YARINDO&api_key=0f07c53f07cbcd11e3e75de681e292baaa2f0a9ce588f60136276b2d1ddc93b6')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    })
-	})
-
-	$('.gaji_opsi_pinjaman_ambil').select2({
-		placeholder: '- Pilih opsi -',
-		dropdownParent: $('#hitung'),
-		theme: 'bootstrap-5'
-	});
-
-	$('.gaji_opsi_pinjaman_bayar').select2({
-		placeholder: '- Pilih opsi -',
-		dropdownParent: $('#hitung'),
-		theme: 'bootstrap-5'
+		var url = $(this).val();
+		window.location.href = '/sigaka/gaji?month=' + url;
 	});
 
 	$(document).on('click', '.gaji-hitung', function (e) {
@@ -744,6 +753,7 @@ $(document).ready(function () {
 					$('#hitung_karyawan_status').val(response.karyawan_status);
 					$('#hitung_month_set').val(response.month_set);
 					$('#hitung_status_karyawan').val(response.karyawan_status);
+					$('#hitung_rekap_total_pinjam').val(response.pinjaman_bayar);
 					if (response.karyawan_status == 'rekap training' || response.karyawan_status == 'rekap tetap'){
 						$('#rekap').show();
 						$('#hitung_rekap_gaji_pokok').val(response.gaji_pokok);
@@ -751,22 +761,6 @@ $(document).ready(function () {
 						$('#hitung_rekap_uang_makan').val(response.uang_makan);
 						$('#hitung_rekap_uang_transport').val(response.uang_transport);
 						if (response.karyawan_status == 'rekap tetap') {
-
-							add_options('.gaji_opsi_pinjaman_ambil', '', '');
-							$.each(response.pinjaman_ambil, function(index, item) {
-								var date = new Date(item.pinjaman_date_created);
-								var text = item.pinjaman_jumlah + ' - ' + date.toLocaleDateString();
-								add_options('.gaji_opsi_pinjaman_ambil', text, item.pinjaman_id);
-							});
-
-							add_options('.gaji_opsi_pinjaman_bayar', '', '');
-							$.each(response.pinjaman_bayar, function(index, item) {
-								var date = new Date(item.pinjaman_date_created);
-								var text = item.pinjaman_jumlah + ' - ' + date.toLocaleDateString();
-								add_options('.gaji_opsi_pinjaman_bayar', text, item.pinjaman_id);
-							});
-
-
 							$('#hitung_rekap_tabungan_saat_ini').val(response.tabungan_saat_ini);
 							$('.rekap_tetap').show();
 						}
@@ -786,12 +780,105 @@ $(document).ready(function () {
 		});
 	});
 
+	$(document).on('click', '.gaji-edit', function (e) {
+		e.preventDefault();
+		var id = $(this).data('id');
+		var month = $('.gaji-month-picker').val();
+		var getUrl = root + 'gaji/edit/' + id + "/" + month;
+		$.ajax({
+			url : getUrl,
+			type : 'ajax',
+			dataType : 'json',
+			success: function (response) {
+				if (response != null){
+					$('#id').val(response.gaji_id);
+					$('#edit_status_gaji').val(response.gaji_status).trigger('change');
+					$('#edit_text_name_karyawan').text(response.karyawan_nama +' Bulan ' + response.gaji_bulan_ke + ' Tahun ' + response.gaji_tahun_ke);
+				}
+			},
+			error: function (response) {
+				console.log(response.status + 'error');
+			}
+		});
+	});
+
+	$(document).on('click', '.gaji-show', function (e) {
+		e.preventDefault();
+		var id = $(this).data('id');
+		var month = $('.gaji-month-picker').val();
+		var getUrl = root + 'gaji/edit/' + id + "/" + month;
+		$('#detail_gaji_rekap').hide();
+		$('#detail_gaji_lapangan').hide();
+		$.ajax({
+			url : getUrl,
+			type : 'ajax',
+			dataType : 'json',
+			success: function (response) {
+				if (response != null){
+					if (response.karyawan_status == 'rekap tetap' || response.karyawan_status == 'rekap training'){
+						$('#detail_text_name_karyawan').text(response.karyawan_nama +' Bulan ' + response.gaji_bulan_ke + ' Tahun ' + response.gaji_tahun_ke);
+						$('#show_rekap_gaji_status').val(response.gaji_status);
+						$('#show_rekap_gaji_bulan').val(response.gaji_bulan_ke);
+						$('#show_rekap_gaji_tahun').val(response.gaji_tahun_ke);
+						$('#show_rekap_gaji_pokok').val(response.gaji_pokok);
+						$('#show_rekap_gaji_uang_makan').val(response.gaji_uang_makan);
+						$('#show_rekap_gaji_transport').val(response.gaji_transport);
+						$('#show_rekap_gaji_pinjaman').val(response.gaji_pinjaman_bayar ? response.gaji_pinjaman_bayar : 0);
+						$('#show_rekap_gaji_tabungan_masuk').val(response.gaji_tabungan_masuk ? response.gaji_tabungan_masuk : 0);
+						$('#show_rekap_gaji_tabungan_keluar').val(response.gaji_tabungan_masuk_keluar ? response.gaji_tabungan_masuk_keluar : 0);
+						$('#show_rekap_gaji_total').val(response.gaji_total);
+						$('#detail_gaji_rekap').show();
+					} else {
+						$('#detail_gaji_lapangan').show();
+					}
+				}
+			},
+			error: function (response) {
+				console.log(response.status + 'error');
+			}
+		});
+	});
+
+	$(document).on('click', '.gaji-slip', function (e) {
+		e.preventDefault();
+		var id = $(this).data('id');
+		var month = $('.gaji-month-picker').val();
+		var getUrl = root + 'gaji/slip/' + id + "/" + month;
+		$.ajax({
+			url : getUrl,
+			type : 'ajax',
+			dataType : 'json',
+			success: function (response) {
+				if (response != null){
+					$('#slip_nama').text(response.slip_nama);
+					$('#slip_jabatan').text(response.slip_jabatan);
+					$('#slip_bulan').text(response.slip_bulan);
+					$('#slip_hari').text(response.slip_hari);
+					$('#slip_gaji_pokok').text(response.slip_gaji_pokok);
+					$('#slip_gaji_bonus').text(response.slip_gaji_bonus);
+					$('#slip_tabungan_keluar').text(response.slip_tabungan_keluar);
+					$('#slip_total_atas').text(response.slip_total_atas);
+					$('#slip_pinjam').text(response.slip_pinjam);
+					$('#slip_tabungan').text(response.slip_tabungan);
+					$('#slip_potongan').text(response.slip_potongan);
+					$('#slip_kemacetan').text(response.slip_kemacetan);
+					$('#slip_tidak_masuk').text(response.slip_tidak_masuk);
+					$('#slip_total_bawah').text(response.slip_total_bawah);
+					$('#slip_sisa_gaji').text(response.slip_sisa_gaji);
+				}
+			},
+			error: function (response) {
+				console.log(response.status + 'error');
+			}
+		});
+	});
+
 	$("#formHitungGaji").submit(function(event) {
 		event.preventDefault();
 
 		Swal.fire({
 			title: 'Apakah kamu yakin?',
-			text: 'Anda tidak mungkin merubah data ini setelah generate/hitung gaji, pastikan data benar!',
+			text: 'Anda tidak dapat merubah data ini setelah generate/hitung gaji, pastikan data benar!',
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonText: 'Ya, lakukan!',
@@ -800,6 +887,23 @@ $(document).ready(function () {
 			if (result.isConfirmed) {
 				event.currentTarget.submit();
 			}
+		});
+	});
+
+	$("#formEditGaji").submit(function(event) {
+		event.preventDefault();
+
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'Anda tidak dapat merubah data ini setelah merubah status, pastikan data benar!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Ya, lakukan!',
+			cancelButtonText: 'Tidak, batalkan'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					event.currentTarget.submit();
+				}
 		});
 	});
 

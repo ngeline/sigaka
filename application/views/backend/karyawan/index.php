@@ -52,7 +52,6 @@
 					</button>
 				<?php endif; ?>
 			</div>
-			<hr>
 			<div class="card-body">
 				<table class="table table-bordered w-100" id="table_data">
 					<thead>

@@ -139,11 +139,17 @@
 					<li class=" nav-item <?php if ($this->uri->segment(1) == 'storting') echo 'active' ?>"><a href="<?= base_url('storting') ?>"><i class="ft-user-check"></i><span class="menu-title" data-i18n="">Storting</span></a>
 					</li>
 				<?php endif; ?>
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+				<?php if ($this->session->userdata('session_hak_akses') == 'karyawan' && $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap') : ?>
+					<li class=" nav-item <?php if ($this->uri->segment(1) == 'pinjaman') echo 'active' ?>"><a href="<?= base_url('pinjaman') ?>"><i class="ft-calendar"></i><span class="menu-title" data-i18n="">Pinjaman</span></a>
+					</li>
+				<?php endif; ?>
+				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan' || $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap') : ?>
 					<li class=" nav-item <?php if ($this->uri->segment(1) == 'tabungan') echo 'active' ?>"><a href="<?= base_url('tabungan') ?>"><i class="icon-wallet"></i><span class="menu-title" data-i18n="">Tabungan</span></a>
 					</li>
-					<li class=" nav-item <?php if ($this->uri->segment(1) == 'gaji') echo 'active' ?>"><a href="<?= base_url('gaji') ?>"><i class="icon-wallet"></i><span class="menu-title" data-i18n="">Gaji</span></a>
-					</li>
+				<?php endif; ?>
+				<li class=" nav-item <?php if ($this->uri->segment(1) == 'gaji') echo 'active' ?>"><a href="<?= base_url('gaji') ?>"><i class="icon-wallet"></i><span class="menu-title" data-i18n="">Gaji</span></a>
+				</li>
+				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
 					<li class=" nav-item"><a href="<?= base_url('laporan') ?>"><i class="ft-file"></i><span class="menu-title" data-i18n="">Laporan</span></a>
 					</li>
 				<?php endif; ?>

@@ -113,7 +113,7 @@
 		</div>
 		<!--Sidebar BG Image Toggle Ends-->
 
-<hr> -->
+<hr>
 
 <!-- <div class="row mb-2">
 			<!-- <div class="col">
@@ -129,7 +129,7 @@
 			<button id="google" class="btn btn-social-icon btn-google sharrre"><i class="la la-google"></i></button>
 		</div>
 	</div>
-</div> --> -->
+</div> -->
 <!-- End: Customizer-->
 
 

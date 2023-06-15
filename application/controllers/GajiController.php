@@ -7,7 +7,7 @@ class GajiController extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$model = array('GajiModel', 'PinjamanModel', 'KaryawanModel', 'TabunganModel');
+		$model = array('GajiModel', 'PinjamanModel', 'KaryawanModel', 'TabunganModel', 'AbsensiModel', 'PotonganGajiModel');
 		$helper = array('tgl_indo', 'nominal', 'main_helper');
 		$this->load->model($model);
 		$this->load->helper($helper);
@@ -22,6 +22,7 @@ class GajiController extends CI_Controller
 		$month_set = explode('-', $month);
 
 		$data_karyawan = $this->GajiModel->hitungGajiRekap($id_karyawan, $month_set);
+		$data_pinjaman = $this->GajiModel->pinjamanBayarByIdKaryawan($id_karyawan);
 
 		switch ($data_karyawan['karyawan_status']) {
 			case 'rekap training':
@@ -50,8 +51,8 @@ class GajiController extends CI_Controller
 			'uang_transport' => 150000,
 			'tabungan_saat_ini' => $data_karyawan['tabungan_jumlah'] ? $data_karyawan['tabungan_jumlah'] : 0,
 			'tabungan_id' => $data_karyawan['tabungan_id'],
-			'pinjaman_ambil' => $this->GajiModel->pinjamanAmbilByIdKaryawan($id_karyawan),
-			'pinjaman_bayar' => $this->GajiModel->pinjamanBayarByIdKaryawan($id_karyawan)
+			'pinjaman_bayar' => $data_pinjaman ? $data_pinjaman['pinjaman_jumlah'] : 0,
+			'pinjaman_id' => $data_pinjaman ? $data_pinjaman['pinjaman_id'] : ''
 		);
 
 		return $data_rekap;
@@ -108,25 +109,16 @@ class GajiController extends CI_Controller
 					'gaji_pokok' => $data_hitung_rekap['gaji_pokok'],
 					'gaji_uang_makan' => $data_hitung_rekap['uang_makan'],
 					'gaji_transport' => $data_hitung_rekap['uang_transport'],
+					'gaji_status' => 'pending',
 					'gaji_date_updated' => current_datetime_indo(),
 				);
 
-				// Jika Post Pinjam Ambil Tidak Kosong
-				if (!empty($data_get['hitung_rekap_pinjam_ambil'])) {
-					$data_pinjaman_ambil = $this->PinjamanModel->find($data_get['hitung_rekap_pinjam_ambil']);
-					$this->PinjamanModel->update($data_get['hitung_rekap_pinjam_ambil'], ['pinjaman_status' => 'terhutang']);
-
-					$data['gaji_pinjaman_ambil'] = $data_pinjaman_ambil->pinjaman_jumlah;
-					array_push($values_add, intval($data_pinjaman_ambil->pinjaman_jumlah));
-				}
-
 				// Jika Post Pinjam Bayar Tidak Kosong
-				if (!empty($data_get['hitung_rekap_pinjam_bayar'])) {
-					$data_pinjaman_bayar = $this->PinjamanModel->find($data_get['hitung_rekap_pinjam_bayar']);
-					$this->PinjamanModel->update($data_get['hitung_rekap_pinjam_bayar'], ['pinjaman_status' => 'lunas']);
+				if ($data_hitung_rekap['pinjaman_bayar'] > 0 && !empty($data_hitung_rekap['pinjaman_id'])) {
+					$this->PinjamanModel->update($data_hitung_rekap['pinjaman_id'], ['pinjaman_status' => 'lunas']);
 
-					$data['gaji_pinjaman_bayar'] = $data_pinjaman_bayar->pinjaman_jumlah;
-					array_push($values_subtract, intval($data_pinjaman_bayar->pinjaman_jumlah));
+					$data['gaji_pinjaman_bayar'] = $data_hitung_rekap['pinjaman_bayar'];
+					array_push($values_subtract, intval($data_hitung_rekap['pinjaman_bayar']));
 				}
 
 				// Jika Post Tabungan Masuk Tidak Kosong
@@ -246,6 +238,69 @@ class GajiController extends CI_Controller
 			$this->session->set_flashdata('message', $error_msg);
 			redirect("gaji?month={$data_get['month_set']}");
 		}
+	}
+
+	public function edit($id, $month)
+	{
+		$month_set = explode('-', $month);
+
+		$data = $this->GajiModel->find($id, $month_set);
+
+		echo json_encode($data);
+	}
+
+	public function slip($id, $month)
+	{
+		$month_set = explode('-', $month);
+
+		$data = $this->GajiModel->find($id, $month_set);
+
+		$data_absensi = $this->AbsensiModel->find($id, $month_set);
+
+		$data_sum_potongan = $this->PotonganGajiModel->sumPotongan();
+		$total_potongan = $data['karyawan_status'] == 'lapangan tetap' || $data['karyawan_status'] == 'lapangan_training' ? $data_sum_potongan->total : 0;
+
+		$lain_atas = 0;
+		$data['gaji_tabungan_keluar'] ? $lain_atas += intval($data['gaji_tabungan_keluar']) : $lain_atas += 0;
+		$data['gaji_uang_makan'] ? $lain_atas += intval($data['gaji_uang_makan']) : $lain_atas += 0;
+		$data['gaji_transport'] ? $lain_atas += intval($data['gaji_transport']) : $lain_atas += 0;
+
+		$total_atas = intval($data['gaji_pokok']) + intval($data['gaji_bonus']) + intval($lain_atas);
+		$total_bawah = intval($data['gaji_tabungan_masuk']) + intval($total_potongan) + intval($data['gaji_potongan_kemacetan']) + intval($data['gaji_potongan_tidak_masuk']);
+
+		$output = [
+			'slip_nama' => $data['karyawan_nama'],
+			'slip_jabatan' => $data['karyawan_status'],
+			'slip_bulan' => "{$data['gaji_bulan_ke']} - {$data['gaji_tahun_ke']}",
+			'slip_hari' => $data_absensi->absensi_kehadiran . ' hari',
+			'slip_gaji_pokok' => nominal($data['gaji_pokok']),
+			'slip_gaji_bonus' => $data['gaji_bonus'] ? nominal($data['gaji_bonus']) : nominal(0),
+			'slip_tabungan_keluar' => nominal($lain_atas),
+			'slip_total_atas' => nominal($total_atas),
+			'slip_pinjam' => $data['gaji_pinjaman_bayar'] ? nominal($data['gaji_pinjaman_bayar']) : nominal(0),
+			'slip_tabungan' => $data['gaji_tabungan_masuk'] ? nominal($data['gaji_tabungan_masuk']) : nominal(0),
+			'slip_potongan' => nominal($total_potongan),
+			'slip_kemacetan' => $data['gaji_potongan_kemacetan'] ? nominal($data['gaji_potongan_kemacetan']) : nominal(0),
+			'slip_tidak_masuk' => $data['gaji_potongan_tidak_masuk'] ? nominal($data['gaji_potongan_tidak_masuk']) : nominal(0),
+			'slip_total_bawah' => nominal($total_bawah),
+			'slip_sisa_gaji' => nominal($data['gaji_total'])
+		];
+
+		echo json_encode($output);
+	}
+
+	public function update()
+	{
+		$data_get = $this->input->post();
+
+		$data_array = [
+			'gaji_status' => $data_get['status_gaji']
+		];
+
+		$this->GajiModel->update($data_get['id'], $data_array);
+
+		$this->session->set_flashdata('alert', 'update');
+		redirect("gaji");
 	}
 
 	private function dd($data)

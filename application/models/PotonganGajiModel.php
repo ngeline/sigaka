@@ -33,6 +33,15 @@ class PotonganGajiModel extends CI_Model
 		return $query->row();
 	}
 
+	public function sumPotongan()
+	{
+		$this->db->select('sum(potongan_jumlah) as total');
+		$this->db->from('sigaka_potongan');
+
+		$query = $this->db->get();
+		return $query->row();
+	}
+
 	public function insert($data)
 	{
 		$this->db->insert('sigaka_potongan', $data);

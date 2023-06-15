@@ -11,14 +11,18 @@ class TabunganModel extends CI_Model
 		$this->load->database();
 	}
 
-	public function findAll()
+	public function findAll($id)
 	{
 		$this->db->select('*');
 		$this->db->from('sigaka_karyawan as sk');
 		$this->db->join('sigaka_tabungan as st', "sk.karyawan_id = st.tabungan_karyawan_id", 'left');
 		$this->db->where('karyawan_date_deleted', null);
-		$this->db->where('karyawan_status', 'rekap tetap');
-		$this->db->or_where('karyawan_status', 'lapangan tetap');
+		if (!empty($id)) {
+			$this->db->where('karyawan_id', $id);
+		} else {
+			$this->db->where('karyawan_status', 'rekap tetap');
+			$this->db->or_where('karyawan_status', 'lapangan tetap');
+		}
 		$this->db->order_by('karyawan_date_created', 'DESC');
 		$this->db->order_by('karyawan_date_updated', 'DESC');
 

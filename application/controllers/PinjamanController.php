@@ -21,9 +21,14 @@ class PinjamanController extends CI_Controller
 
 	public function index()
 	{
+		$id_karyawan = '';
+		if ($this->session->has_userdata('session_karyawan_id')) {
+			$id_karyawan = $this->session->userdata('session_karyawan_id');
+		}
+
 		$data = array(
-			'pinjaman' => $this->PinjamanModel->findAll(),
-			'karyawan' => $this->KaryawanModel->findAllByStatusTetap(),
+			'pinjaman' => $this->PinjamanModel->findAll($id_karyawan),
+			'karyawan' => $this->KaryawanModel->findAllByStatusTetap($id_karyawan),
 			'title' => 'Pinjaman',
 		);
 
@@ -76,10 +81,18 @@ class PinjamanController extends CI_Controller
 			'pinjaman_id' => 'PJ-' . substr(time(), 2),
 			'pinjaman_karyawan_id' => $data['karyawan'],
 			'pinjaman_jumlah' => $data['jumlah'],
-			'pinjaman_status' => 'terhutang',
+			// 'pinjaman_status' => 'terhutang',
 			'pinjaman_deskripsi' => $data['deskripsi'],
 			'pinjaman_date_updated' => current_datetime_indo(),
 		];
+
+		$check_record = $this->PinjamanModel->findByKaryawan($data['karyawan']);
+
+		if (!empty($check_record)) {
+			$this->session->set_flashdata('alert', 'error');
+			$this->session->set_flashdata('message', 'Sudah ada pinjaman di bulan ini');
+			redirect('pinjaman');	
+		}
 
 		$this->PinjamanModel->insert($array_data);
 
@@ -112,6 +125,16 @@ class PinjamanController extends CI_Controller
 		];
 
 		$this->PinjamanModel->update($data['id'], $array_data);
+
+		$this->session->set_flashdata('alert', 'update');
+		redirect('pinjaman');
+	}
+
+	public function validasi()
+	{
+		$data_get = $this->input->post();
+
+		$this->PinjamanModel->update($data_get['id'], ['pinjaman_status' => $data_get['validasi_status_peminjaman']]);
 
 		$this->session->set_flashdata('alert', 'update');
 		redirect('pinjaman');

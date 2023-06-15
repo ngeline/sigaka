@@ -53,16 +53,16 @@
 			<div class="card-body">
 				<div class="data-storting-riwayat" data-id="<?= $id_karyawan ?>"></div>
 				<div class="row">
-					<div class="col-sm-3 mb-2">
-						<label class="text-danger note-filter" style="font-size: 10pt;">*) Pilih untuk filter storting riwayat</label>
-						<input type="month" class="form-control storting-riwayat-month-picker" value="<?= $date_set ?>">
-					</div>
-					<div class="col-md-4 border-left border-1 mb-2">
+					<!-- <div class="col-sm-3 mb-2"> -->
+						<!-- <label class="text-danger note-filter" style="font-size: 10pt;">*) Pilih untuk filter storting riwayat</label> -->
+						<input type="hidden" class="form-control storting-riwayat-month-picker" value="<?= $date_set ?>">
+					<!-- </div> -->
+					<div class="col-md-4 mb-2 pl-2">
 						<label>Total Kemacetan Bulan Ini</label>
 						<input type="number" class="form-control" name="kemacetan" id="edit_total_kemacetan" placeholder="Masukkan jumlah kemacetan" value="<?= $kemacetan ? $kemacetan->kemacetan_jumlah : '' ?>" autocomplete="off" readonly required>
 					</div>
-					<div class="col-md-4 text-right mb-2">
-						<label>Klik untuk validasi semua status bulan ini</label>
+					<div class="col-md-8 text-right mb-2 pr-2">
+						<label>Klik untuk validasi semua status bulan ini</label><br>
 						<button type="button" class="btn btn-primary btn-bg-gradient-x-purple-red box-shadow-2 storting-riwayat-validasi-semua">
 							<i class="ft-check"></i> Validasi Semua
 						</button>

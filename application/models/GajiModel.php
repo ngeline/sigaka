@@ -45,19 +45,6 @@ class GajiModel extends CI_Model
 		return $query->row_array();
 	}
 
-	public function pinjamanAmbilByIdKaryawan($id_karyawan)
-	{
-		$this->db->select('pinjaman_id, pinjaman_jumlah, pinjaman_date_created');
-		$this->db->from('sigaka_pinjaman');
-		$this->db->where('pinjaman_karyawan_id', $id_karyawan);
-		$this->db->where('pinjaman_status', 'belum diambil');
-		$this->db->order_by('pinjaman_date_created', 'DESC');
-
-		$query = $this->db->get();
-
-		return $query->result_array();
-	}
-
 	public function pinjamanBayarByIdKaryawan($id_karyawan)
 	{
 		$this->db->select('pinjaman_id, pinjaman_jumlah, pinjaman_date_created');
@@ -68,13 +55,14 @@ class GajiModel extends CI_Model
 
 		$query = $this->db->get();
 
-		return $query->result_array();
+		return $query->row_array();
 	}
 
 	public function find($id_karyawan, $bulan = [])
 	{
 		$this->db->select('*');
-		$this->db->from('sigaka_gaji');
+		$this->db->from('sigaka_gaji as sg');
+		$this->db->join('sigaka_karyawan as sk', "sg.gaji_karyawan_id = sk.karyawan_id", 'left');
 		$this->db->where('gaji_bulan_ke', $bulan[1]);
 		$this->db->where('gaji_tahun_ke', $bulan[0]);
 		$this->db->where('gaji_karyawan_id', $id_karyawan);

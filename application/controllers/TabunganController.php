@@ -21,9 +21,14 @@ class TabunganController extends CI_Controller
 
 	public function index()
 	{
+		$id_karyawan = '';
+		if ($this->session->has_userdata('session_karyawan_id')) {
+			$id_karyawan = $this->session->userdata('session_karyawan_id');
+		}
+
 		$data = array(
-			'tabungan' => $this->TabunganModel->findAll(),
-			'title' => 'Tabungan',
+			'tabungan' => $this->TabunganModel->findAll($id_karyawan),
+			'title' => 'Tabungan' . $this->session->userdata('session_karyawan_id'),
 		);
 
 		$this->load->view('templates/header', $data);

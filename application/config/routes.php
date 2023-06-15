@@ -90,6 +90,7 @@ $route['pinjaman'] = 'PinjamanController';
 $route['pinjaman/store'] = 'PinjamanController/store';
 $route['pinjaman/edit/(:any)'] = 'PinjamanController/edit/$1';
 $route['pinjaman/update'] = 'PinjamanController/update';
+$route['pinjaman/validasi'] = 'PinjamanController/validasi';
 
 $route['tabungan'] = 'TabunganController';
 $route['tabungan/show/(:any)'] = 'TabunganController/show/$1';
@@ -108,6 +109,9 @@ $route['storting/riwayat/update/semua'] = 'StortingController/updateRiwayatSemua
 $route['gaji'] = 'GajiController';
 $route['gaji/hitung/(:any)/(:any)/(:any)'] = 'GajiController/hitung/$1/$2/$3';
 $route['gaji/store'] = 'GajiController/store_hitung';
+$route['gaji/edit/(:any)/(:any)'] = 'GajiController/edit/$1/$2';
+$route['gaji/update'] = 'GajiController/update';
+$route['gaji/slip/(:any)/(:any)'] = 'GajiController/slip/$1/$2';
 // $route['gaji/bayar/(:any)'] = 'GajiController/bayar/$1';
 // $route['gaji/pinjam/(:any)'] = 'GajiController/pinjam/$1';
 // $route['gaji/detail/(:any)'] = 'GajiController/detail/$1';

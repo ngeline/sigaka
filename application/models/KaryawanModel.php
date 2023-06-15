@@ -23,13 +23,19 @@ class KaryawanModel extends CI_Model
 		return $query->result_array();
 	}
 
-	public function findAllByStatusTetap()
+	public function findAllByStatusTetap($id)
 	{
 		$this->db->select('*');
 		$this->db->from('sigaka_karyawan');
-		$this->db->where('karyawan_status', 'rekap tetap');
-		$this->db->or_where('karyawan_status', 'lapangan tetap');
 		$this->db->where('karyawan_date_deleted', null);
+
+		if (!empty($id)) {
+			$this->db->where('karyawan_id', $id);
+		} else {
+			$this->db->where('karyawan_status', 'rekap tetap');
+			$this->db->or_where('karyawan_status', 'lapangan tetap');
+		}
+
 		$this->db->order_by('karyawan_date_created', 'DESC');
 		$this->db->order_by('karyawan_date_updated', 'DESC');
 		$query = $this->db->get();
@@ -67,7 +73,8 @@ class KaryawanModel extends CI_Model
 		return $this->db->affected_rows();
 	}
 
-	public function get_karyawan_id($id_pengguna) {
+	public function get_karyawan_id($id_pengguna)
+	{
 		$this->db->select('*');
 		$this->db->from('sigaka_karyawan');
 		$this->db->where('karyawan_pengguna_id', $id_pengguna);
