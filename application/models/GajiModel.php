@@ -14,13 +14,15 @@ class GajiModel extends CI_Model
 	{
 		$this->db->select('*');
 		$this->db->from('sigaka_karyawan as sk');
-		$this->db->join('sigaka_gaji as sg', "sk.karyawan_id = sg.gaji_karyawan_id AND sg.gaji_bulan_ke = {$bulan[1]} AND sg.gaji_tahun_ke = {$bulan[0]}", 'left');
-		$this->db->where('karyawan_date_deleted', null);
 
 		if (!empty($id_karyawan)) {
+			$this->db->join('sigaka_gaji as sg', "sk.karyawan_id = sg.gaji_karyawan_id", 'left');
 			$this->db->where('karyawan_id', $id_karyawan);
+		} else {
+			$this->db->join('sigaka_gaji as sg', "sk.karyawan_id = sg.gaji_karyawan_id AND sg.gaji_bulan_ke = {$bulan[1]} AND sg.gaji_tahun_ke = {$bulan[0]}", 'left');
 		}
 
+		$this->db->where('karyawan_date_deleted', null);
 		$this->db->order_by('karyawan_date_created', 'DESC');
 		$this->db->order_by('karyawan_date_updated', 'DESC');
 

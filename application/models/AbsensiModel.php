@@ -15,13 +15,15 @@ class AbsensiModel extends CI_Model
 	{
 		$this->db->select('*');
 		$this->db->from('sigaka_karyawan as sk');
-		$this->db->join('sigaka_absensi as sa', "sk.karyawan_id = sa.absensi_karyawan_id AND sa.absensi_tahun_ke = {$bulan[0]} AND sa.absensi_bulan_ke = {$bulan[1]}", 'left');
-		$this->db->where('karyawan_date_deleted', null);
-
+		
 		if (!empty($id)) {
+			$this->db->join('sigaka_absensi as sa', "sk.karyawan_id = sa.absensi_karyawan_id", 'left');
 			$this->db->where('karyawan_id', $id);
+		} else {
+			$this->db->join('sigaka_absensi as sa', "sk.karyawan_id = sa.absensi_karyawan_id AND sa.absensi_tahun_ke = {$bulan[0]} AND sa.absensi_bulan_ke = {$bulan[1]}", 'left');
 		}
-
+		
+		$this->db->where('karyawan_date_deleted', null);
 		$this->db->order_by('karyawan_date_created', 'DESC');
 		$this->db->order_by('karyawan_date_updated', 'DESC');
 

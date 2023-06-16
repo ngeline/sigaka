@@ -49,14 +49,16 @@
 			</div>
 
 			<div class="card-body">
-				<div class="text-danger note-filter" style="font-size: 10pt;">
-					*) Pilih untuk filter absensi
-				</div>
-				<div class="row">
-					<div class="col-sm-3 mb-2">
-						<input type="month" class="form-control absensi-month-picker" value="<?= $date_set ?>">
+				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+					<div class="text-danger note-filter" style="font-size: 10pt;">
+						*) Pilih untuk filter absensi
 					</div>
-				</div>
+					<div class="row">
+						<div class="col-sm-3 mb-2">
+							<input type="month" class="form-control absensi-month-picker" value="<?= $date_set ?>">
+						</div>
+					</div>
+				<?php endif; ?>
 				<table class="table table-bordered w-100" id="table_data">
 					<thead>
 						<tr>

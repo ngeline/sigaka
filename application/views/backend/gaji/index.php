@@ -48,12 +48,14 @@
 			</div>
 
 			<div class="card-body d-print-none">
-				<div class="row">
-					<div class="col-sm-3 mb-2">
-						<label class="text-danger" style="font-size: 10pt;">*) Pilih untuk filter gaji</label>
-						<input type="month" class="form-control gaji-month-picker" value="<?= $date_set ?>">
+				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+					<div class="row">
+						<div class="col-sm-3 mb-2">
+							<label class="text-danger" style="font-size: 10pt;">*) Pilih untuk filter gaji</label>
+							<input type="month" class="form-control gaji-month-picker" value="<?= $date_set ?>">
+						</div>
 					</div>
-				</div>
+				<?php endif; ?>
 				<table class="table table-bordered w-100 d-print-none" id="table_data">
 					<thead>
 						<tr>
@@ -81,14 +83,20 @@
 								<td><?= $value['gaji_total'] ? nominal($value['gaji_total']) : '-' ?></td>
 								<td><?= $value['gaji_status'] ? $value['gaji_status'] : '-' ?></td>
 								<td>
-									<?php if ($value['gaji_status'] == 'terbayar') : ?>
+									<?php if ($value['gaji_status'] == 'terbayar' && $this->session->userdata('session_hak_akses') == 'manajer') : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-slip" data-toggle="modal" data-target="#slip" data-id="<?= $value['karyawan_id'] ?>" title="Cetak slip"><i class="ft-printer"></i></button>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
-									<?php elseif (empty($value['gaji_total'])) : ?>
+									<?php elseif (empty($value['gaji_total']) && $this->session->userdata('session_hak_akses') == 'manajer') : ?>
 										<button class="btn btn-danger btn-sm  btn-bg-gradient-x-red-pink box-shadow-2 gaji-hitung" data-id="<?= $value['karyawan_id'] ?>" data-status="<?= $value['karyawan_status'] ?>" title="Hitung gaji"><i class="ft-briefcase"></i></button>
-									<?php else : ?>
+									<?php elseif ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-blue-green box-shadow-2 gaji-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['karyawan_id'] ?>" title="Edit gaji"><i class="ft-edit"></i></button>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
+									<?php elseif ($this->session->userdata('session_hak_akses') == 'owner') : ?>
+										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
+									<?php elseif (!empty($value['gaji_total']) && $this->session->has_userdata('session_karyawan_id')) : ?>
+										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
+									<?php else : ?>
+										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" title="Detail gaji" disabled><i class="ft-eye"></i></button>
 									<?php endif; ?>
 								</td>
 							</tr>
@@ -321,7 +329,6 @@
 			</div>
 			<div class="modal-footer">
 				<input type="reset" class="btn btn-secondary btn-bg-gradient-x-red-pink" data-dismiss="modal" value="Tutup">
-				<input type="submit" class="btn btn-primary btn-bg-gradient-x-blue-cyan" name="simpan" value="Simpan">
 			</div>
 		</div>
 	</div>
@@ -406,10 +413,10 @@
 					</div>
 					<hr>
 					<div class="row">
-						<div class="col-8">
+						<div class="col-8 text-left">
 							<table style="width: 100%">
 								<tr>
-									<td><b>Gaji Pokok</b></td>
+									<td class="w-25"><b>Gaji Pokok</b></td>
 									<td>: <span id="slip_gaji_pokok"></span></td>
 								</tr>
 								<tr>
@@ -425,10 +432,10 @@
 						<div class="col-12 text-right">
 							<p><b>JUMLAH &nbsp;<u><span id="slip_total_atas"></span></u></b></p>
 						</div>
-						<div class="col-7">
+						<div class="col-8 text-left">
 							<table style="width: 100%">
 								<tr>
-									<td><b>Bon</b></td>
+									<td class="w-25"><b>Bon</b></td>
 									<td>: <span id="slip_pinjam"></span></td>
 								</tr>
 								<tr>

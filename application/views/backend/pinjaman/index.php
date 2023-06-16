@@ -89,7 +89,7 @@
 									<td>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-blue-green box-shadow-2 pinjaman-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['pinjaman_id'] ?>"><i class="ft-edit"></i></button>
 									</td>
-								<?php else : ?>
+								<?php elseif ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
 									<td>
 										<button class="btn btn-success btn-sm" disabled><i class="ft-edit"></i></button>
 									</td>

@@ -63,14 +63,19 @@ class GajiController extends CI_Controller
 		$get_data = $this->input->get('month');
 		$month_set = $get_data ? explode('-', $get_data) : explode('-', date('Y-m'));
 
+		$id_karyawan = '';
+		if ($this->session->has_userdata('session_karyawan_id')) {
+			$id_karyawan = $this->session->userdata('session_karyawan_id');
+		}
+
 		$data = array(
+			'gaji' => $this->GajiModel->findAll($id_karyawan, $month_set),
 			'title' => 'Gaji',
 			'date_set' => "{$month_set[0]}-{$month_set[1]}",
 			'month_set' => $month_set[1],
 			'year_set' => $month_set[0]
 		);
 
-		$data['gaji'] = $this->GajiModel->findAll(null, $month_set);
 
 		$this->load->view('templates/header', $data);
 		$this->load->view('backend/gaji/index', $data);
