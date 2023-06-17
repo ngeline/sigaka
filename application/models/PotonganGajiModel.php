@@ -28,7 +28,7 @@ class PotonganGajiModel extends CI_Model
 		$this->db->select('*');
 		$this->db->from('sigaka_potongan');
 		$this->db->where('potongan_id', $id);
-
+		
 		$query = $this->db->get();
 		return $query->row();
 	}
@@ -37,6 +37,7 @@ class PotonganGajiModel extends CI_Model
 	{
 		$this->db->select('sum(potongan_jumlah) as total');
 		$this->db->from('sigaka_potongan');
+		$this->db->where('potongan_date_deleted', null);
 
 		$query = $this->db->get();
 		return $query->row();
