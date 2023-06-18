@@ -1,32 +1,52 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class LaporanController extends CI_Controller{
+class LaporanController extends CI_Controller
+{
 	public function __construct()
 	{
 		parent::__construct();
-		$model = array('LaporanModel');
-		$helper = array('tgl_indo_helper');
+		$model = array('LaporanModel', 'GajiModel');
+		$helper = array('tgl_indo', 'nominal', 'main_helper');
 		$this->load->model($model);
 		$this->load->helper($helper);
+		$this->load->library('Pdfgenerator');
 		if (!$this->session->has_userdata('session_id')) {
 			$this->session->set_flashdata('alert', 'belum_login');
 			redirect(base_url('login'));
 		}
 	}
 
-	public function index(){
+	public function index()
+	{
+		$get_data = $this->input->get('month');
+		$month_set = $get_data ? explode('-', $get_data) : explode('-', date('Y-m'));
+
 		$data = array(
-			'title' => 'Laporan'
+			'laporan' => $this->LaporanModel->findLaporan($month_set),
+			'title' => 'Laporan',
+			'date_set' => "{$month_set[0]}-{$month_set[1]}",
+			'month_set' => $month_set[1],
+			'year_set' => $month_set[0]
 		);
-		$this->load->view('templates/header',$data);
-		$this->load->view('backend/laporan/index',$data);
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('backend/laporan/index', $data);
 		$this->load->view('templates/footer');
 	}
 
-	public function lihat($tahun,$bulan){
-		$tanggal = $tahun.'-'.$bulan;
-		echo json_encode($this->LaporanModel->lihat_laporan($tanggal));
+	public function cetak($bulan)
+	{
+		$data = array(
+			'title' => 'Contoh PDF',
+			'content' => 'Ini adalah konten PDF'
+		);
+
+		// Membaca template atau view yang ingin diekspor ke PDF
+		$html = $this->load->view('backend/laporan/pdf_template', $data, TRUE);
+
+		// Generate PDF
+		$this->pdfgenerator->generate($html, 'example', TRUE, 'A4', 'portrait');
 	}
 }

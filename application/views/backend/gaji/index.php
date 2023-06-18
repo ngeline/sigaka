@@ -223,7 +223,7 @@
 						</div>
 						<div class="col-md-6">
 							<fieldset class="form-group floating-label-form-group">
-								<label>Total Kemacetan</label>
+								<label>Total Kemacetan <span id="hitung_lapangan_gaji_kemacetan_bulan"></span></label>
 								<input type="text" class="form-control" id="hitung_lapangan_kemacetan" readonly>
 							</fieldset>
 						</div>

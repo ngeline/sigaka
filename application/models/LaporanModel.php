@@ -9,15 +9,18 @@ class LaporanModel extends CI_Model{
 		$this->load->database();
 	}
 
-	public function lihat_laporan($tanggal){
+	public function findLaporan($bulan = [])
+	{
 		$this->db->select('*');
-		$this->db->from('sigaka_gaji');
-		$this->db->join('sigaka_karyawan', 'sigaka_karyawan.karyawan_id = sigaka_gaji.gaji_karyawan_id');
-		$this->db->join('sigaka_jabatan', 'sigaka_jabatan.jabatan_id = sigaka_karyawan.karyawan_jabatan_id');
-		$this->db->like('gaji_tanggal',$tanggal);
-		$this->db->where('gaji_status','sudah');
-		$this->db->order_by('gaji_bulan_ke','DESC');
+		$this->db->from('sigaka_gaji as sg');
+		$this->db->join('sigaka_karyawan as sk', "sg.gaji_karyawan_id = sk.karyawan_id", 'left');
+		$this->db->where('gaji_bulan_ke', $bulan[1]);
+		$this->db->where('gaji_tahun_ke', $bulan[0]);
+		$this->db->order_by('gaji_date_created', 'DESC');
+		$this->db->order_by('gaji_date_updated', 'DESC');
+
 		$query = $this->db->get();
+
 		return $query->result_array();
 	}
 }

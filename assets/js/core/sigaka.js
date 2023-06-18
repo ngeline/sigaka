@@ -526,19 +526,19 @@ $(document).ready(function () {
 		var return_id_karyawan = $('.data-storting-riwayat').data('id');
 		var return_date = $('.storting-riwayat-month-picker').val();
 		var getUrl = root + 'storting/riwayat/update/semua?date='+return_date+'&id_karyawan='+return_id_karyawan;
-
+		
 		Swal.fire({
-			title: 'Anda yakin ingin memvalidasi semua data storting bulan ini?',
+			title: 'Apakah kamu yakin?',
+			text: 'Anda akan memvalidasi semua data storting bulan ini!',
 			icon: 'warning',
 			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Ya, validasi semua data!'
-		  }).then((result) => {
+			confirmButtonText: 'Ya, lakukan!',
+			cancelButtonText: 'Tidak, batalkan'
+		}).then((result) => {
 			if (result.isConfirmed) {
 				window.location.href = getUrl;
 			}
-		  })
+		});
 	});
 
 	// ------------------------------------------------------------------------------------------
@@ -590,23 +590,24 @@ $(document).ready(function () {
 						}
 					} else {
 						$('#lapangan').show();
-						// $('#hitung_lapangan_status_karyawan').val(response.karyawan_status);
-						// $('#hitung_lapangan_kehadiran').val(response.jumlah_kehadiran);
-						// $('#hitung_lapangan_pinjaman').val(response.total_pinjaman);
-						// $('#hitung_lapangan_angsuran').val(response.total_angsuran);
-						// $('#hitung_lapangan_angsuran_hutang').val(response.total_angsuran_hutang);
-						// $('#hitung_lapangan_kemacetan').val(response.total_kemacetan);
-						// $('#hitung_lapangan_index').val(response.index);
-						// $('#hitung_lapangan_gaji_pokok').val(response.gaji_pokok);
-						// $('#hitung_lapangan_gaji_bonus').val(response.gaji_bonus);
-						// $('#hitung_lapangan_gaji_potongan').val(response.potongan);
-						// $('#hitung_lapangan_gaji_potongan_kemacetan').val(response.potongan_kemacetan);
-						// $('#hitung_lapangan_gaji_potongan_absen').val(response.potongan_absen);
-						// $('#hitung_lapangan_gaji_potongan_bon').val(response.pinjaman_bayar);
-						// if (response.karyawan_status == 'lapangan tetap') {
-						// 	$('#hitung_lapangan_tabungan_saat_ini').val(response.tabungan_saat_ini);
-						// 	$('.lapangan_tetap').show();
-						// }
+						$('#hitung_lapangan_status_karyawan').val(response.karyawan_status);
+						$('#hitung_lapangan_kehadiran').val(response.jumlah_kehadiran);
+						$('#hitung_lapangan_pinjaman').val(response.total_pinjaman);
+						$('#hitung_lapangan_angsuran').val(response.total_angsuran);
+						$('#hitung_lapangan_angsuran_hutang').val(response.total_angsuran_hutang);
+						$('#hitung_lapangan_kemacetan').val(response.total_kemacetan);
+						$('#hitung_lapangan_index').val(response.index);
+						$('#hitung_lapangan_gaji_pokok').val(response.gaji_pokok);
+						$('#hitung_lapangan_gaji_bonus').val(response.gaji_bonus);
+						$('#hitung_lapangan_gaji_potongan').val(response.potongan);
+						$('#hitung_lapangan_gaji_potongan_kemacetan').val(response.potongan_kemacetan);
+						$('#hitung_lapangan_gaji_potongan_absen').val(response.potongan_absen);
+						$('#hitung_lapangan_gaji_potongan_bon').val(response.pinjaman_bayar);
+						$('#hitung_lapangan_gaji_kemacetan_bulan').text(response.potongan_kemacetan_bulan);
+						if (response.karyawan_status == 'lapangan tetap') {
+							$('#hitung_lapangan_tabungan_saat_ini').val(response.tabungan_saat_ini);
+							$('.lapangan_tetap').show();
+						}
 					}
 					$('#hitung').modal('show');
 				}
@@ -667,18 +668,18 @@ $(document).ready(function () {
 						$('#show_rekap_gaji_total').val(response.gaji_total);
 						$('#detail_gaji_rekap').show();
 					} else {
-						// $('#show_lapangan_gaji_status').val(response.karyawan_status);
-						// $('#show_lapangan_gaji_bulan').val(response.gaji_bulan_ke);
-						// $('#show_lapangan_gaji_tahun').val(response.gaji_tahun_ke);
-						// $('#show_lapangan_gaji_pokok').val(response.gaji_pokok);
-						// $('#show_lapangan_gaji_bonus').val(response.gaji_bonus);
-						// $('#show_lapangan_gaji_potongan').val(response.gaji_potongan_total);
-						// $('#show_lapangan_gaji_potongan_kemacetan').val(response.gaji_potongan_kemacetan);
-						// $('#show_lapangan_gaji_potongan_absen').val(response.gaji_potongan_tidak_masuk);
-						// $('#show_lapangan_gaji_pinjaman').val(response.gaji_pinjaman_bayar ? response.gaji_pinjaman_bayar : 0);
-						// $('#show_lapangan_gaji_tabungan_masuk').val(response.gaji_tabungan_masuk ? response.gaji_tabungan_masuk : 0);
-						// $('#show_lapangan_gaji_tabungan_keluar').val(response.gaji_tabungan_keluar ? response.gaji_tabungan_keluar : 0);
-						// $('#show_lapangan_gaji_total').val(response.gaji_total);
+						$('#show_lapangan_gaji_status').val(response.karyawan_status);
+						$('#show_lapangan_gaji_bulan').val(response.gaji_bulan_ke);
+						$('#show_lapangan_gaji_tahun').val(response.gaji_tahun_ke);
+						$('#show_lapangan_gaji_pokok').val(response.gaji_pokok);
+						$('#show_lapangan_gaji_bonus').val(response.gaji_bonus);
+						$('#show_lapangan_gaji_potongan').val(response.gaji_potongan_total);
+						$('#show_lapangan_gaji_potongan_kemacetan').val(response.gaji_potongan_kemacetan);
+						$('#show_lapangan_gaji_potongan_absen').val(response.gaji_potongan_tidak_masuk);
+						$('#show_lapangan_gaji_pinjaman').val(response.gaji_pinjaman_bayar ? response.gaji_pinjaman_bayar : 0);
+						$('#show_lapangan_gaji_tabungan_masuk').val(response.gaji_tabungan_masuk ? response.gaji_tabungan_masuk : 0);
+						$('#show_lapangan_gaji_tabungan_keluar').val(response.gaji_tabungan_keluar ? response.gaji_tabungan_keluar : 0);
+						$('#show_lapangan_gaji_total').val(response.gaji_total);
 						$('#detail_gaji_lapangan').show();
 					}
 				}
@@ -759,6 +760,25 @@ $(document).ready(function () {
 
 	// ------------------------------------------------------------------------------------------
 	// End JS Gaji
+	// ------------------------------------------------------------------------------------------
+
+	// ------------------------------------------------------------------------------------------
+	// JS Laporan
+	// ------------------------------------------------------------------------------------------
+
+	$(document).on('change', '.gaji-month-picker', function (e) {
+		var url = $(this).val();
+		window.location.href = '/sigaka/laporan?month=' + url;
+	});
+	
+	$(document).on('click', '#cetak_laporan', function (e) {
+		var url = $('.gaji-month-picker').val();
+		// window.location.href = '/sigaka/laporan/cetak/' + url;
+		window.open('/sigaka/laporan/cetak/' + url, "_blank");
+	});
+
+	// ------------------------------------------------------------------------------------------
+	// End JS Laporan
 	// ------------------------------------------------------------------------------------------
 
 });

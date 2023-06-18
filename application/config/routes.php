@@ -58,9 +58,6 @@ $route['dashboard'] = 'DashboardController';
 // $route['jabatan/update'] = 'JabatanController/update';
 // $route['jabatan/hapus/(:any)'] = 'JabatanController/hapus/$1';
 
-$route['laporan'] = 'LaporanController';
-$route['laporan/lihat/(:any)/(:any)'] = 'LaporanController/lihat/$1/$2';
-
 $route['login'] = 'AuthController/login';
 $route['logout'] = 'AuthController/logout';
 
@@ -112,6 +109,6 @@ $route['gaji/store'] = 'GajiController/store_hitung';
 $route['gaji/edit/(:any)/(:any)'] = 'GajiController/edit/$1/$2';
 $route['gaji/update'] = 'GajiController/update';
 $route['gaji/slip/(:any)/(:any)'] = 'GajiController/slip/$1/$2';
-// $route['gaji/bayar/(:any)'] = 'GajiController/bayar/$1';
-// $route['gaji/pinjam/(:any)'] = 'GajiController/pinjam/$1';
-// $route['gaji/detail/(:any)'] = 'GajiController/detail/$1';
+
+$route['laporan'] = 'LaporanController';
+$route['laporan/cetak/(:any)'] = 'LaporanController/cetak/$1';

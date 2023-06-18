@@ -151,6 +151,7 @@ class GajiController extends CI_Controller
 			'gaji_bonus' => $data_karyawan['karyawan_status'] == 'lapangan tetap' ? $gaji_bonus : 0,
 			'potongan' => $data_sum_potongan->total,
 			'potongan_kemacetan' => $data_karyawan['karyawan_status'] == 'lapangan tetap' ? $potongan_kemacetan : 0,
+			'potongan_kemacetan_bulan' => bulan_with_zero($hasil_explode[1]),
 			'potongan_absen' => $potongan_absensi,
 			'pinjaman_bayar' => $bon,
 			'pinjaman_id' => $data_pinjaman ? $data_pinjaman['pinjaman_id'] : '',
@@ -330,131 +331,131 @@ class GajiController extends CI_Controller
 					$this->GajiModel->insert($data);
 				}
 			} else {
-				// $data_hitung_lapangan = $this->hitung_gaji_lapangan($data_get['karyawan_id'], $data_get['month_set']);
-				// $values_add = [$data_hitung_lapangan['gaji_pokok'], $data_hitung_lapangan['gaji_bonus']];
-				// $values_subtract = [$data_hitung_lapangan['potongan'], $data_hitung_lapangan['potongan_kemacetan'], $data_hitung_lapangan['potongan_absen']];
+				$data_hitung_lapangan = $this->hitung_gaji_lapangan($data_get['karyawan_id'], $data_get['month_set']);
+				$values_add = [$data_hitung_lapangan['gaji_pokok'], $data_hitung_lapangan['gaji_bonus']];
+				$values_subtract = [$data_hitung_lapangan['potongan'], $data_hitung_lapangan['potongan_kemacetan'], $data_hitung_lapangan['potongan_absen']];
 
-				// $data = array(
-				// 	'gaji_bulan_ke' => $month_split[1],
-				// 	'gaji_tahun_ke' => $month_split[0],
-				// 	'gaji_status' => 'pending',
-				// 	'gaji_pokok' => $data_hitung_lapangan['gaji_pokok'],
-				// 	'gaji_bonus' => $data_hitung_lapangan['gaji_bonus'],
-				// 	'gaji_potongan_total' => $data_hitung_lapangan['potongan'],
-				// 	'gaji_potongan_kemacetan' => $data_hitung_lapangan['potongan_kemacetan'],
-				// 	'gaji_potongan_tidak_masuk' => $data_hitung_lapangan['potongan_absen'],
-				// 	'gaji_date_updated' => current_datetime_indo(),
-				// );
+				$data = array(
+					'gaji_bulan_ke' => $month_split[1],
+					'gaji_tahun_ke' => $month_split[0],
+					'gaji_status' => 'pending',
+					'gaji_pokok' => $data_hitung_lapangan['gaji_pokok'],
+					'gaji_bonus' => $data_hitung_lapangan['gaji_bonus'],
+					'gaji_potongan_total' => $data_hitung_lapangan['potongan'],
+					'gaji_potongan_kemacetan' => $data_hitung_lapangan['potongan_kemacetan'],
+					'gaji_potongan_tidak_masuk' => $data_hitung_lapangan['potongan_absen'],
+					'gaji_date_updated' => current_datetime_indo(),
+				);
 
-				// // Jika Post Pinjam Bayar Tidak Kosong
-				// if ($data_hitung_lapangan['pinjaman_bayar'] > 0 && !empty($data_hitung_lapangan['pinjaman_id'])) {
-				// 	$this->PinjamanModel->update($data_hitung_lapangan['pinjaman_id'], ['pinjaman_status' => 'lunas']);
+				// Jika Post Pinjam Bayar Tidak Kosong
+				if ($data_hitung_lapangan['pinjaman_bayar'] > 0 && !empty($data_hitung_lapangan['pinjaman_id'])) {
+					$this->PinjamanModel->update($data_hitung_lapangan['pinjaman_id'], ['pinjaman_status' => 'lunas']);
 
-				// 	$data['gaji_pinjaman_bayar'] = $data_hitung_lapangan['pinjaman_bayar'];
-				// 	array_push($values_subtract, intval($data_hitung_lapangan['pinjaman_bayar']));
-				// }
+					$data['gaji_pinjaman_bayar'] = $data_hitung_lapangan['pinjaman_bayar'];
+					array_push($values_subtract, intval($data_hitung_lapangan['pinjaman_bayar']));
+				}
 
-				// // Jika Post Tabungan Masuk Tidak Kosong
-				// if (!empty($data_get['hitung_lapangan_tabungan_masuk'])) {
-				// 	array_push($values_subtract, intval($data_get['hitung_lapangan_tabungan_masuk']));
+				// Jika Post Tabungan Masuk Tidak Kosong
+				if (!empty($data_get['hitung_lapangan_tabungan_masuk'])) {
+					array_push($values_subtract, intval($data_get['hitung_lapangan_tabungan_masuk']));
 
-				// 	$data['gaji_tabungan_masuk'] = intval($data_get['hitung_lapangan_tabungan_masuk']);
+					$data['gaji_tabungan_masuk'] = intval($data_get['hitung_lapangan_tabungan_masuk']);
 
-				// 	if (!empty($data_hitung_lapangan['tabungan_id'])) {
-				// 		$arr_data_tabungan = array(
-				// 			'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) + intval($data_get['hitung_lapangan_tabungan_masuk']),
-				// 			'tabungan_date_updated' => current_datetime_indo(),
-				// 		);
+					if (!empty($data_hitung_lapangan['tabungan_id'])) {
+						$arr_data_tabungan = array(
+							'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) + intval($data_get['hitung_lapangan_tabungan_masuk']),
+							'tabungan_date_updated' => current_datetime_indo(),
+						);
 
-				// 		$arr_data_riwayat_tabungan = array(
-				// 			'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
-				// 			'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
-				// 			'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
-				// 			'riwayat_tabungan_status' => 'masuk'
-				// 		);
+						$arr_data_riwayat_tabungan = array(
+							'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+							'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+							'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
+							'riwayat_tabungan_status' => 'masuk'
+						);
 
-				// 		$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
-				// 		$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
-				// 	} else {
-				// 		$arr_data_tabungan = array(
-				// 			'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
-				// 			'tabungan_karyawan_id' => $data_get['karyawan_id'],
-				// 			'tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
-				// 			'tabungan_date_updated' => current_datetime_indo(),
-				// 		);
+						$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
+						$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+					} else {
+						$arr_data_tabungan = array(
+							'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+							'tabungan_karyawan_id' => $data_get['karyawan_id'],
+							'tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
+							'tabungan_date_updated' => current_datetime_indo(),
+						);
 
-				// 		$arr_data_riwayat_tabungan = array(
-				// 			'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
-				// 			'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
-				// 			'riwayat_tabungan_status' => 'masuk'
-				// 		);
+						$arr_data_riwayat_tabungan = array(
+							'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+							'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
+							'riwayat_tabungan_status' => 'masuk'
+						);
 
-				// 		$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
-				// 		$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
-				// 		$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
-				// 	}
-				// }
+						$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
+						$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+						$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+					}
+				}
 
-				// // Jika Post Tabungan Masuk Tidak Kosong
-				// if (!empty($data_get['hitung_lapangan_tabungan_keluar'])) {
-				// 	if (intval($data_get['hitung_lapangan_tabungan_keluar']) > intval($data_hitung_lapangan['tabungan_saat_ini'])) {
-				// 		$this->session->set_flashdata('alert', 'error');
-				// 		$this->session->set_flashdata('message', 'Saldo tabungan tidak cukup');
-				// 		redirect("gaji?month={$data_get['month_set']}");
-				// 	} else {
-				// 		array_push($values_add, $data_get['hitung_lapangan_tabungan_keluar']);
+				// Jika Post Tabungan Masuk Tidak Kosong
+				if (!empty($data_get['hitung_lapangan_tabungan_keluar'])) {
+					if (intval($data_get['hitung_lapangan_tabungan_keluar']) > intval($data_hitung_lapangan['tabungan_saat_ini'])) {
+						$this->session->set_flashdata('alert', 'error');
+						$this->session->set_flashdata('message', 'Saldo tabungan tidak cukup');
+						redirect("gaji?month={$data_get['month_set']}");
+					} else {
+						array_push($values_add, $data_get['hitung_lapangan_tabungan_keluar']);
 
-				// 		$data['gaji_tabungan_keluar'] = $data_get['hitung_lapangan_tabungan_keluar'];
+						$data['gaji_tabungan_keluar'] = $data_get['hitung_lapangan_tabungan_keluar'];
 
-				// 		if (!empty($data_hitung_lapangan['tabungan_id'])) {
-				// 			$arr_data_tabungan = array(
-				// 				'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
-				// 				'tabungan_date_updated' => current_datetime_indo(),
-				// 			);
+						if (!empty($data_hitung_lapangan['tabungan_id'])) {
+							$arr_data_tabungan = array(
+								'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
+								'tabungan_date_updated' => current_datetime_indo(),
+							);
 
-				// 			$arr_data_riwayat_tabungan = array(
-				// 				'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
-				// 				'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
-				// 				'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
-				// 				'riwayat_tabungan_status' => 'keluar'
-				// 			);
+							$arr_data_riwayat_tabungan = array(
+								'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+								'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+								'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
+								'riwayat_tabungan_status' => 'keluar'
+							);
 
-				// 			$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
-				// 			$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
-				// 		} else {
-				// 			$arr_data_tabungan = array(
-				// 				'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
-				// 				'tabungan_karyawan_id' => $data_get['karyawan_id'],
-				// 				'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
-				// 				'tabungan_date_updated' => current_datetime_indo(),
-				// 			);
+							$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
+							$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+						} else {
+							$arr_data_tabungan = array(
+								'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+								'tabungan_karyawan_id' => $data_get['karyawan_id'],
+								'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
+								'tabungan_date_updated' => current_datetime_indo(),
+							);
 
-				// 			$arr_data_riwayat_tabungan = array(
-				// 				'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
-				// 				'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
-				// 				'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
-				// 				'riwayat_tabungan_status' => 'keluar'
-				// 			);
+							$arr_data_riwayat_tabungan = array(
+								'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+								'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+								'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
+								'riwayat_tabungan_status' => 'keluar'
+							);
 
-				// 			$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
-				// 			$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
-				// 			$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
-				// 		}
-				// 	}
-				// }
+							$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
+							$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+							$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+						}
+					}
+				}
 
-				// $values = [$values_add, $values_subtract];
-				// $operations = ['add', 'subtract'];
-				// $data['gaji_total'] = hitung_total($values, $operations);
-				// $check_record = $this->GajiModel->find($data_get['karyawan_id'], $month_split);
+				$values = [$values_add, $values_subtract];
+				$operations = ['add', 'subtract'];
+				$data['gaji_total'] = hitung_total($values, $operations);
+				$check_record = $this->GajiModel->find($data_get['karyawan_id'], $month_split);
 
-				// if (!empty($check_record)) {
-				// 	$this->GajiModel->update($check_record['gaji_id'], $data);
-				// } else {
-				// 	$data['gaji_id'] = 'GJ-' . substr(time(), 2);
-				// 	$data['gaji_karyawan_id'] = $data_get['karyawan_id'];
-				// 	$this->GajiModel->insert($data);
-				// }
+				if (!empty($check_record)) {
+					$this->GajiModel->update($check_record['gaji_id'], $data);
+				} else {
+					$data['gaji_id'] = 'GJ-' . substr(time(), 2);
+					$data['gaji_karyawan_id'] = $data_get['karyawan_id'];
+					$this->GajiModel->insert($data);
+				}
 			}
 
 			$this->db->trans_commit();
