@@ -39,51 +39,6 @@ $(document).ready(function () {
 	// ------------------------------------------------------------------------------------------
 
 	// ------------------------------------------------------------------------------------------
-	// jabatan
-	// ------------------------------------------------------------------------------------------
-
-	// $('.gaji-edit').click(function () {
-	// 	var id = $(this).val();
-	// 	var getUrl = root + 'jabatan/updateForm/' + id;
-	// 	var html = '';
-	// 	$.ajax({
-	// 		url : getUrl,
-	// 		type : 'ajax',
-	// 		dataType : 'json',
-	// 		success: function (response) {
-	// 			console.log(response);
-	// 			if (response != null){
-	// 				html += '' +
-	// 					'<input type="hidden" value="'+id+'" name="id">' +
-	// 					'<fieldset class="form-group floating-label-form-group">' +
-	// 					'<label for="jabatan">Jabatan</label>' +
-	// 					'<input type="text" class="form-control" name="jabatan" id="jabatan" value="'+response.jabatan_nama+'" placeholder="Jabatan" autocomplete="off" required>' +
-	// 					'</fieldset>' +
-	// 					'<fieldset class="form-group floating-label-form-group">' +
-	// 					'<label for="gaji">Gaji</label>' +
-	// 					'<input type="text" class="form-control" name="gaji" id="gaji" value="'+response.jabatan_gaji+'" placeholder="Jumlah gaji" autocomplete="off" required>' +
-	// 					'</fieldset>';
-
-	// 				console.log(html);
-	// 				$('#updateformgaji').html(html);
-	// 			}
-	// 		},
-	// 		error: function (response) {
-	// 			console.log(response.status + 'error');
-	// 		}
-	// 	});
-	// });
-
-	// // ------------------------------------------------------------------------------------------
-
-	// $('.gaji-hapus').click(function () {
-	// 	var id = $(this).val();
-	// 	var html = '' +
-	// 		'<a href="'+root+'jabatan/hapus/'+id+'" class="btn btn-danger btn-bg-gradient-x-red-pink">Hapus</a>';
-	// 	$('#hapusgaji').html(html);
-	// });
-
-	// ------------------------------------------------------------------------------------------
 	// easy autocomplete
 	// ------------------------------------------------------------------------------------------
 	var options = {
@@ -117,137 +72,6 @@ $(document).ready(function () {
 	};
 
 	// $('#nama_karyawan').easyAutocomplete(options);
-
-	// ------------------------------------------------------------------------------------------
-	// absen
-	// ------------------------------------------------------------------------------------------
-
-	// $('.absen-lembur').click(function () {
-	// 	var id = $(this).val();
-	// 	var html = '' +
-	// 		'<a href="'+root+'absen/lembur/'+id+'" class="btn btn-danger btn-bg-gradient-x-red-pink">Ok</a>';
-	// 	$('#tombol-lembur').html(html);
-	// });
-
-	// ------------------------------------------------------------------------------------------
-	// gaji
-	// ------------------------------------------------------------------------------------------
-
-	// $('.gaji-lihat').click(function (e) {
-	// 	e.preventDefault();
-	// 	var id = $(this).val();
-	// 	var getUrl = root + 'gaji/lihat/' + id;
-	// 	var total = 0;
-	// 	$.ajax({
-	// 		url : getUrl,
-	// 		type : 'ajax',
-	// 		dataType : 'json',
-	// 		success: function (response) {
-	// 			if (response != null){
-	// 				$('#gaji_lihat_nama').val(response.karyawan_nama);
-	// 				$('#gaji_lihat_jabatan').val(response.jabatan_nama);
-	// 				$('#gaji_lihat_tg').val(response.karyawan_tanggal_gabung);
-	// 				$('#gaji_lihat_lembur').val(formatRupiah(response.gaji_lembur,'Rp. '));
-	// 				$('#gaji_lihat_gaji').val(formatRupiah(response.gaji_total,'Rp. '));
-	// 				total = parseInt(response.gaji_lembur) + parseInt(response.gaji_total);
-	// 				$('#gaji_lihat_total').val(formatRupiah(total.toString(),'Rp. '));
-	// 				$('#gaji_lihat_bayar_pinjaman').val(formatRupiah(response.gaji_bayar_pinjaman,'Rp. '));
-	// 				bersih = total - parseInt(response.gaji_bayar_pinjaman);
-	// 				$('#gaji_lihat_bersih').val(formatRupiah(bersih.toString(),'Rp. '));
-	// 				$('#gaji_lihat_bulan').val(response.gaji_bulan_ke);
-	// 				console.log(response);
-	// 			}
-	// 		},
-	// 		error: function (response) {
-	// 			console.log(response.status + 'error');
-	// 		}
-	// 	});
-	// });
-
-	// $('.gaji-slip').click(function (e) {
-	// 	e.preventDefault();
-	// 	var id = $(this).val();
-	// 	var getUrl = root + 'gaji/lihat/' + id;
-	// 	var total = 0;
-	// 	$.ajax({
-	// 		url : getUrl,
-	// 		type : 'ajax',
-	// 		dataType : 'json',
-	// 		success: function (response) {
-	// 			if (response != null){
-	// 				$('.slip-nama').html(response.karyawan_nama);
-	// 				$('#slip-jabatan').html(response.jabatan_nama);
-	// 				$('#slip-nohp').html(response.karyawan_nomor_hp);
-	// 				$('#slip-lembur').html(formatRupiah(response.gaji_lembur));
-	// 				$('#slip-gaji').html(formatRupiah(response.gaji_total));
-	// 				total = parseInt(response.gaji_lembur) + parseInt(response.gaji_total);
-	// 				$('#slip-total').html(formatRupiah(total.toString()));
-
-	// 				var myStr = date_indo(response.gaji_tanggal);
-	// 				var strArray = myStr.split(" ");
-	// 				var bulan = strArray[1];
-	// 				$('.slip-bulan').html(bulan);
-
-	// 				var myStr2 = response.gaji_tanggal;
-	// 				var strArray2 = myStr2.split("-");
-	// 				var bulan2 = strArray2[1];
-
-	// 				var jumlahHari = ['31','28','31','30','31','30','31','31','30','31','30','31'];
-	// 				$('#slip-hari').html(jumlahHari[parseInt(bulan2)]);
-
-	// 				var getUrl2 = root + 'gaji/pinjam/' + id;
-	// 				$.ajax({
-	// 					url : getUrl2,
-	// 					type : 'ajax',
-	// 					dataType : 'json',
-	// 					success : function (response2) {
-	// 						if (response2 != null){
-	// 							if ((parseInt(response2.pinjam_jumlah) - parseInt(response2.pinjam_bayar)) > 500000){
-	// 								$('.slip-pinjam').html(formatRupiah('500000'));
-	// 								bersih = total - 500000;
-	// 								sisa = (parseInt(response2.pinjam_jumlah) - parseInt(response2.pinjam_bayar)) - 500000;
-	// 								$('#slip-bersih').html(formatRupiah(bersih.toString()));
-	// 								$('#slip-sisa-pinjam').html(formatRupiah(sisa.toString()));
-	// 								$('#slip-terbilang').html(terbilang(bersih.toString()) + 'Rupiah');
-	// 							} else {
-	// 								pinjam = parseInt(response2.pinjam_jumlah) - parseInt(response2.pinjam_bayar);
-	// 								$('.slip-pinjam').html(formatRupiah(pinjam.toString()));
-	// 								bersih = total - pinjam;
-	// 								sisa = (parseInt(response2.pinjam_jumlah) - parseInt(response2.pinjam_bayar)) - pinjam;
-	// 								$('#slip-bersih').html(formatRupiah(bersih.toString()));
-	// 								$('#slip-sisa-pinjam').html(formatRupiah(sisa.toString()));
-	// 								$('#slip-terbilang').html(terbilang(bersih.toString()) + 'Rupiah');
-	// 							}
-	// 						}
-	// 						else {
-	// 							$('.slip-pinjam').html('Rp. 0');
-	// 							sisa = 0;
-	// 							$('#slip-bersih').html(formatRupiah(total.toString()));
-	// 							$('#slip-sisa-pinjam').html(formatRupiah(sisa.toString()));
-	// 							$('#slip-terbilang').html(terbilang(total.toString()) + 'Rupiah');
-	// 						}
-	// 					},
-	// 					error: function (response2) {
-	// 						console.log(response2.status + 'error');
-	// 					}
-	// 				});
-	// 				console.log(response);
-	// 			}
-	// 		},
-	// 		error: function (response) {
-	// 			console.log(response.status + 'error');
-	// 		}
-	// 	});
-	// });
-
-	// // ------------------------------------------------------------------------------------------
-
-	// $('.gaji-bayar').click(function () {
-	// 	var id = $(this).val();
-	// 	var html = '' +
-	// 		'<a href="'+root+'gaji/bayar/'+id+'" class="btn btn-danger btn-bg-gradient-x-blue-cyan">Konfirmasi</a>';
-	// 	$('#tombol-konfirmasi').html(html);
-	// });
 
 	// ------------------------------------------------------------------------------------------
 
@@ -752,10 +576,10 @@ $(document).ready(function () {
 					$('#text_name_karyawan').text(response.karyawan_nama +' Bulan ' + response.bulan + ' Tahun ' + response.tahun);
 					$('#hitung_karyawan_status').val(response.karyawan_status);
 					$('#hitung_month_set').val(response.month_set);
-					$('#hitung_status_karyawan').val(response.karyawan_status);
-					$('#hitung_rekap_total_pinjam').val(response.pinjaman_bayar);
 					if (response.karyawan_status == 'rekap training' || response.karyawan_status == 'rekap tetap'){
 						$('#rekap').show();
+						$('#hitung_status_karyawan').val(response.karyawan_status);
+						$('#hitung_rekap_total_pinjam').val(response.pinjaman_bayar);
 						$('#hitung_rekap_gaji_pokok').val(response.gaji_pokok);
 						$('#hitung_rekap_jumlah_kehadiran').val(response.jumlah_kehadiran);
 						$('#hitung_rekap_uang_makan').val(response.uang_makan);
@@ -765,12 +589,25 @@ $(document).ready(function () {
 							$('.rekap_tetap').show();
 						}
 					} else {
-						$('#lapangan').hide();
-						$('.lapangan_tetap').hide();
-
+						$('#lapangan').show();
+						// $('#hitung_lapangan_status_karyawan').val(response.karyawan_status);
+						// $('#hitung_lapangan_kehadiran').val(response.jumlah_kehadiran);
+						// $('#hitung_lapangan_pinjaman').val(response.total_pinjaman);
+						// $('#hitung_lapangan_angsuran').val(response.total_angsuran);
+						// $('#hitung_lapangan_angsuran_hutang').val(response.total_angsuran_hutang);
+						// $('#hitung_lapangan_kemacetan').val(response.total_kemacetan);
+						// $('#hitung_lapangan_index').val(response.index);
+						// $('#hitung_lapangan_gaji_pokok').val(response.gaji_pokok);
+						// $('#hitung_lapangan_gaji_bonus').val(response.gaji_bonus);
+						// $('#hitung_lapangan_gaji_potongan').val(response.potongan);
+						// $('#hitung_lapangan_gaji_potongan_kemacetan').val(response.potongan_kemacetan);
+						// $('#hitung_lapangan_gaji_potongan_absen').val(response.potongan_absen);
+						// $('#hitung_lapangan_gaji_potongan_bon').val(response.pinjaman_bayar);
+						// if (response.karyawan_status == 'lapangan tetap') {
+						// 	$('#hitung_lapangan_tabungan_saat_ini').val(response.tabungan_saat_ini);
+						// 	$('.lapangan_tetap').show();
+						// }
 					}
-					// $('#edit_angsuran').val(response.data.storting_angsuran);
-					// $('#edit_angsuran_hutang').val(response.data.storting_angsuran_hutang);
 					$('#hitung').modal('show');
 				}
 			},
@@ -806,7 +643,8 @@ $(document).ready(function () {
 		e.preventDefault();
 		var id = $(this).data('id');
 		var month = $('.gaji-month-picker').val();
-		var getUrl = root + 'gaji/edit/' + id + "/" + month;
+		var current_month = month ? month : 0;
+		var getUrl = root + 'gaji/edit/' + id + "/" + current_month;
 		$('#detail_gaji_rekap').hide();
 		$('#detail_gaji_lapangan').hide();
 		$.ajax({
@@ -825,10 +663,22 @@ $(document).ready(function () {
 						$('#show_rekap_gaji_transport').val(response.gaji_transport);
 						$('#show_rekap_gaji_pinjaman').val(response.gaji_pinjaman_bayar ? response.gaji_pinjaman_bayar : 0);
 						$('#show_rekap_gaji_tabungan_masuk').val(response.gaji_tabungan_masuk ? response.gaji_tabungan_masuk : 0);
-						$('#show_rekap_gaji_tabungan_keluar').val(response.gaji_tabungan_masuk_keluar ? response.gaji_tabungan_masuk_keluar : 0);
+						$('#show_rekap_gaji_tabungan_keluar').val(response.gaji_tabungan_keluar ? response.gaji_tabungan_keluar : 0);
 						$('#show_rekap_gaji_total').val(response.gaji_total);
 						$('#detail_gaji_rekap').show();
 					} else {
+						// $('#show_lapangan_gaji_status').val(response.karyawan_status);
+						// $('#show_lapangan_gaji_bulan').val(response.gaji_bulan_ke);
+						// $('#show_lapangan_gaji_tahun').val(response.gaji_tahun_ke);
+						// $('#show_lapangan_gaji_pokok').val(response.gaji_pokok);
+						// $('#show_lapangan_gaji_bonus').val(response.gaji_bonus);
+						// $('#show_lapangan_gaji_potongan').val(response.gaji_potongan_total);
+						// $('#show_lapangan_gaji_potongan_kemacetan').val(response.gaji_potongan_kemacetan);
+						// $('#show_lapangan_gaji_potongan_absen').val(response.gaji_potongan_tidak_masuk);
+						// $('#show_lapangan_gaji_pinjaman').val(response.gaji_pinjaman_bayar ? response.gaji_pinjaman_bayar : 0);
+						// $('#show_lapangan_gaji_tabungan_masuk').val(response.gaji_tabungan_masuk ? response.gaji_tabungan_masuk : 0);
+						// $('#show_lapangan_gaji_tabungan_keluar').val(response.gaji_tabungan_keluar ? response.gaji_tabungan_keluar : 0);
+						// $('#show_lapangan_gaji_total').val(response.gaji_total);
 						$('#detail_gaji_lapangan').show();
 					}
 				}

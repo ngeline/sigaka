@@ -48,7 +48,7 @@ class PinjamanController extends CI_Controller
 			[
 				'field' => 'jumlah',
 				'label' => 'Jumlah Pinjaman',
-				'rules' => 'required|numeric|less_than[300000]'
+				'rules' => 'required|numeric|less_than_equal_to[300000]'
 			],
 			[
 				'field' => 'deskripsi',

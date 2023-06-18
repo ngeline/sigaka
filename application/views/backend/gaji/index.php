@@ -91,10 +91,10 @@
 									<?php elseif ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-blue-green box-shadow-2 gaji-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['karyawan_id'] ?>" title="Edit gaji"><i class="ft-edit"></i></button>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
-									<?php elseif ($this->session->userdata('session_hak_akses') == 'owner') : ?>
+									<?php elseif (!empty($value['gaji_total']) && $this->session->userdata('session_hak_akses') == 'owner') : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
 									<?php elseif (!empty($value['gaji_total']) && $this->session->has_userdata('session_karyawan_id')) : ?>
-										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
+										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['gaji_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
 									<?php else : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" title="Detail gaji" disabled><i class="ft-eye"></i></button>
 									<?php endif; ?>
@@ -188,23 +188,111 @@
 							</div>
 						</div>
 					</div>
-					<div class="modal-body" id="lapangan">
-						<!-- <fieldset class="form-group floating-label-form-group">
-						<label for="tanggal">Tanggal Storting</label>
-						<input type="date" class="form-control" name="tanggal" id="tanggal" placeholder="Masukkan tanggal storting" autocomplete="off" required>
-					</fieldset>
-					<fieldset class="form-group floating-label-form-group">
-						<label for="pinjaman">Storting Pinjaman</label>
-						<input type="number" class="form-control" name="pinjaman" id="pinjaman" placeholder="Masukkan jumlah storting pinjaman" autocomplete="off" required>
-					</fieldset>
-					<fieldset class="form-group floating-label-form-group">
-						<label for="angsuran">Storting Angsuran</label>
-						<input type="number" class="form-control" name="angsuran" id="angsuran" placeholder="Masukkan jumlah storting angsuran" autocomplete="off" required>
-					</fieldset>
-					<fieldset class="form-group floating-label-form-group">
-						<label for="angsuran_hutang">Storting Angsuran Hutang</label>
-						<input type="number" class="form-control" name="angsuran_hutang" id="angsuran_hutang" placeholder="Masukkan jumlah storting angsuran hutang" autocomplete="off" required>
-					</fieldset> -->
+				</div>
+				<div class="modal-body" id="lapangan">
+					<div class="row">
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Jabatan Karyawan</label>
+								<input type="text" class="form-control" id="hitung_lapangan_status_karyawan" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Kehadiran</label>
+								<input type="text" class="form-control" id="hitung_lapangan_kehadiran" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Pinjaman</label>
+								<input type="text" class="form-control" id="hitung_lapangan_pinjaman" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Angsuran</label>
+								<input type="text" class="form-control" id="hitung_lapangan_angsuran" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Angsuran Hutang</label>
+								<input type="text" class="form-control" id="hitung_lapangan_angsuran_hutang" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Kemacetan</label>
+								<input type="text" class="form-control" id="hitung_lapangan_kemacetan" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Index</label>
+								<input type="text" class="form-control" id="hitung_lapangan_index" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Gaji Pokok</label>
+								<input type="text" class="form-control" id="hitung_lapangan_gaji_pokok" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Gaji Bonus</label>
+								<input type="text" class="form-control" id="hitung_lapangan_gaji_bonus" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Bon/Pinjaman</label>
+								<input type="text" class="form-control" id="hitung_lapangan_gaji_potongan_bon" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-4">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Potongan</label>
+								<input type="text" class="form-control" id="hitung_lapangan_gaji_potongan" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-4">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Potongan Kemacetan</label>
+								<input type="text" class="form-control" id="hitung_lapangan_gaji_potongan_kemacetan" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-4">
+							<fieldset class="form-group floating-label-form-group">
+								<label>Total Potongan Tidak Masuk</label>
+								<input type="text" class="form-control" id="hitung_lapangan_gaji_potongan_absen" readonly>
+							</fieldset>
+						</div>
+						<div class="col-md-12">
+							<div class="lapangan_tetap">
+								<div class="row">
+									<div class="col-md-4">
+										<fieldset class="form-group floating-label-form-group">
+											<label>Tabungan Saat ini</label>
+											<input type="text" class="form-control" id="hitung_lapangan_tabungan_saat_ini" readonly>
+										</fieldset>
+									</div>
+									<div class="col-md-4">
+										<fieldset class="form-group floating-label-form-group">
+											<label>Tabungan Masuk</label>
+											<input type="number" class="form-control" name="hitung_lapangan_tabungan_masuk" id="hitung_lapangan_tabungan_masuk">
+										</fieldset>
+									</div>
+									<div class="col-md-4">
+										<fieldset class="form-group floating-label-form-group">
+											<label>Tabungan Keluar</label>
+											<input type="number" class="form-control" name="hitung_lapangan_tabungan_keluar" id="hitung_lapangan_tabungan_keluar">
+										</fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -249,7 +337,7 @@
 
 <!-- Modal detail -->
 <div class="modal fade text-left" id="detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" aria-hidden="true">
-	<div class="modal-dialog lg" role="document">
+	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title" id="myModalLabel35"> Detail Data Gaji <span id="detail_text_name_karyawan"></span></h3>
@@ -267,13 +355,13 @@
 					</div>
 					<div class="col-md-4">
 						<fieldset class="form-group floating-label-form-group">
-							<label>Gaji Bulan</label>
+							<label>Bulan Ke</label>
 							<input type="text" class="form-control" id="show_rekap_gaji_bulan" readonly>
 						</fieldset>
 					</div>
 					<div class="col-md-4">
 						<fieldset class="form-group floating-label-form-group">
-							<label>Gaji Tahun</label>
+							<label>Tahun Ke</label>
 							<input type="text" class="form-control" id="show_rekap_gaji_tahun" readonly>
 						</fieldset>
 					</div>
@@ -322,10 +410,80 @@
 				</div>
 			</div>
 			<div class="modal-body" id="detail_gaji_lapangan">
-				<fieldset class="form-group floating-label-form-group">
-					<label>Status Gaji</label>
-					<input type="text" class="form-control" id="show_status_gaji" readonly>
-				</fieldset>
+				<div class="row">
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Status Gaji</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_status" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Bulan Ke</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_bulan" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Tahun Ke</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_tahun" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Gaji Pokok</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_pokok" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Gaji Bonus</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_bonus" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Potongan</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_potongan" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Potongan Kemacetan</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_potongan_kemacetan" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Potongan Tidak Masuk</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_potongan_absen" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Pinjaman</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_pinjaman" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Tabungan Masuk</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_tabungan_masuk" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Tabungan Keluar</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_tabungan_keluar" readonly>
+						</fieldset>
+					</div>
+					<div class="col-md-4">
+						<fieldset class="form-group floating-label-form-group">
+							<label>Total Gaji</label>
+							<input type="text" class="form-control" id="show_lapangan_gaji_total" readonly>
+						</fieldset>
+					</div>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<input type="reset" class="btn btn-secondary btn-bg-gradient-x-red-pink" data-dismiss="modal" value="Tutup">

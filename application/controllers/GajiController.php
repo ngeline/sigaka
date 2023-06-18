@@ -7,7 +7,7 @@ class GajiController extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$model = array('GajiModel', 'PinjamanModel', 'KaryawanModel', 'TabunganModel', 'AbsensiModel', 'PotonganGajiModel');
+		$model = array('GajiModel', 'PinjamanModel', 'KaryawanModel', 'TabunganModel', 'AbsensiModel', 'PotonganGajiModel', 'KemacetanModel');
 		$helper = array('tgl_indo', 'nominal', 'main_helper');
 		$this->load->model($model);
 		$this->load->helper($helper);
@@ -58,6 +58,109 @@ class GajiController extends CI_Controller
 		return $data_rekap;
 	}
 
+	private function hitung_gaji_lapangan($id_karyawan, $month)
+	{
+		
+		$tanggal = strtotime($month); // Konversi nilai menjadi timestamp
+		$dua_bulan_sebelum = strtotime('-2 months', $tanggal); // Mengurangi 2 bulan dari tanggal
+		$hasil = date('Y-m', $dua_bulan_sebelum);
+		$hasil_explode = explode('-', $hasil);
+
+		$month_set = explode('-', $month);
+
+		$data_karyawan = $this->GajiModel->hitungGajiLapangan($id_karyawan, $month_set);
+		$data_pinjaman = $this->GajiModel->pinjamanBayarByIdKaryawan($id_karyawan);
+		$data_storting = $this->GajiModel->hitungStorting($id_karyawan, $month_set);
+		$data_kemacetan = $this->KemacetanModel->find_kemacetan_karyawan($id_karyawan, $hasil_explode);
+
+		$jumlah_kehadiran = $data_karyawan['absensi_kehadiran'] ? $data_karyawan['absensi_kehadiran'] : 0;
+		$total_pinjaman = $data_storting['pinjaman'] ? $data_storting['pinjaman'] : 0;
+		$total_angsuran = $data_storting['angsuran'] ? $data_storting['angsuran'] : 0;
+		$total_angsuran_hutang = $data_storting['angsuran_hutang'] ? $data_storting['angsuran_hutang'] : 0;
+		$total_kemacetan = $data_kemacetan ? $data_kemacetan->kemacetan_jumlah : 0;
+		$potongan_kemacetan = $data_kemacetan ? ($data_kemacetan->kemacetan_jumlah - $data_storting['angsuran_hutang']) * 0.04 : 0;
+		$bon = $data_pinjaman ? $data_pinjaman['pinjaman_jumlah'] : 0;
+		$tabungan = $data_karyawan['tabungan_jumlah'] ? $data_karyawan['tabungan_jumlah'] : 0;
+
+		$data_index = 0;
+		if ($total_angsuran > 0 && $total_pinjaman > 0) {
+			$data_index = intval($total_angsuran) / intval($total_pinjaman);
+		}
+
+		$data_sum_potongan = $this->PotonganGajiModel->sumPotongan();
+
+		switch ($data_karyawan['karyawan_status']) {
+			case 'lapangan training':
+				$gaji_pokok = 1000000;
+				break;
+			case 'lapangan tetap':
+				if (round($data_index) < 15) {
+					$gaji_pokok = $data_storting['avg_angsuran'];
+				} elseif (round($data_index) >= 15 && round($data_index) <= 19) {
+					$gaji_pokok = round(intval($data_storting['avg_angsuran'] * 1.2), -3);
+				} elseif (round($data_index) >= 20 && round($data_index) <= 25) {
+					$gaji_pokok = round(intval($data_storting['avg_angsuran'] * 1.4), -3);
+				}
+				break;
+			default:
+				$gaji_pokok = 0;
+				break;
+		}
+
+		switch ($data_index) {
+			case '21':
+				$gaji_bonus = 10000;
+				break;
+			case '22':
+				$gaji_bonus = 20000;
+				break;
+			case '23':
+				$gaji_bonus = 30000;
+				break;
+			case '24':
+				$gaji_bonus = 40000;
+				break;
+			case '25':
+				$gaji_bonus = 50000;
+				break;
+
+			default:
+				$gaji_bonus = 0;
+				break;
+		}
+
+		$potongan_absensi = 0;
+		if ($data_karyawan['absensi_ketidakhadiran'] > 0) {
+			$potongan_absensi = round(intval(($gaji_pokok + $gaji_bonus) / $data_karyawan['absensi_kehadiran']), -3);
+		}
+
+		$data_lapangan = array(
+			'karyawan_id' => $id_karyawan,
+			'karyawan_nama' => $data_karyawan['karyawan_nama'],
+			'karyawan_status' => $data_karyawan['karyawan_status'],
+			'bulan' => $month_set[1],
+			'tahun' => $month_set[0],
+			'month_set' => $month,
+			'jumlah_kehadiran' => $jumlah_kehadiran,
+			'total_pinjaman' => $total_pinjaman,
+			'total_angsuran' => $total_angsuran,
+			'total_angsuran_hutang' => $total_angsuran_hutang,
+			'total_kemacetan' => $total_kemacetan,
+			'index' => $data_index,
+			'gaji_pokok' => $gaji_pokok,
+			'gaji_bonus' => $data_karyawan['karyawan_status'] == 'lapangan tetap' ? $gaji_bonus : 0,
+			'potongan' => $data_sum_potongan->total,
+			'potongan_kemacetan' => $data_karyawan['karyawan_status'] == 'lapangan tetap' ? $potongan_kemacetan : 0,
+			'potongan_absen' => $potongan_absensi,
+			'pinjaman_bayar' => $bon,
+			'pinjaman_id' => $data_pinjaman ? $data_pinjaman['pinjaman_id'] : '',
+			'tabungan_saat_ini' => $tabungan,
+			'tabungan_id' => $data_karyawan['tabungan_id']
+		);
+
+		return $data_lapangan;
+	}
+
 	public function index()
 	{
 		$get_data = $this->input->get('month');
@@ -76,7 +179,6 @@ class GajiController extends CI_Controller
 			'year_set' => $month_set[0]
 		);
 
-
 		$this->load->view('templates/header', $data);
 		$this->load->view('backend/gaji/index', $data);
 		$this->load->view('templates/footer');
@@ -84,10 +186,10 @@ class GajiController extends CI_Controller
 
 	public function hitung($id_karyawan, $month, $status)
 	{
-		if ($status == 'rekap training' || $status == 'rekap tetap') {
+		if ($status == 'rekap%20training' || $status == 'rekap%20tetap') {
 			$data = $this->hitung_gaji_rekap($id_karyawan, $month);
-		} else {
-			$data = $this->hitung_gaji_rekap($id_karyawan, $month);
+		} elseif ($status == 'lapangan%20training' || $status == 'lapangan%20tetap') {
+			$data = $this->hitung_gaji_lapangan($id_karyawan, $month);
 		}
 
 		echo json_encode($data);
@@ -227,11 +329,132 @@ class GajiController extends CI_Controller
 					$data['gaji_karyawan_id'] = $data_get['karyawan_id'];
 					$this->GajiModel->insert($data);
 				}
-
-				// $total = hitung_total($values, $operations);
-				// $this->dd(($data_get['hitung_rekap_pinjam_ambil']));
 			} else {
-				$this->dd('pepek');
+				// $data_hitung_lapangan = $this->hitung_gaji_lapangan($data_get['karyawan_id'], $data_get['month_set']);
+				// $values_add = [$data_hitung_lapangan['gaji_pokok'], $data_hitung_lapangan['gaji_bonus']];
+				// $values_subtract = [$data_hitung_lapangan['potongan'], $data_hitung_lapangan['potongan_kemacetan'], $data_hitung_lapangan['potongan_absen']];
+
+				// $data = array(
+				// 	'gaji_bulan_ke' => $month_split[1],
+				// 	'gaji_tahun_ke' => $month_split[0],
+				// 	'gaji_status' => 'pending',
+				// 	'gaji_pokok' => $data_hitung_lapangan['gaji_pokok'],
+				// 	'gaji_bonus' => $data_hitung_lapangan['gaji_bonus'],
+				// 	'gaji_potongan_total' => $data_hitung_lapangan['potongan'],
+				// 	'gaji_potongan_kemacetan' => $data_hitung_lapangan['potongan_kemacetan'],
+				// 	'gaji_potongan_tidak_masuk' => $data_hitung_lapangan['potongan_absen'],
+				// 	'gaji_date_updated' => current_datetime_indo(),
+				// );
+
+				// // Jika Post Pinjam Bayar Tidak Kosong
+				// if ($data_hitung_lapangan['pinjaman_bayar'] > 0 && !empty($data_hitung_lapangan['pinjaman_id'])) {
+				// 	$this->PinjamanModel->update($data_hitung_lapangan['pinjaman_id'], ['pinjaman_status' => 'lunas']);
+
+				// 	$data['gaji_pinjaman_bayar'] = $data_hitung_lapangan['pinjaman_bayar'];
+				// 	array_push($values_subtract, intval($data_hitung_lapangan['pinjaman_bayar']));
+				// }
+
+				// // Jika Post Tabungan Masuk Tidak Kosong
+				// if (!empty($data_get['hitung_lapangan_tabungan_masuk'])) {
+				// 	array_push($values_subtract, intval($data_get['hitung_lapangan_tabungan_masuk']));
+
+				// 	$data['gaji_tabungan_masuk'] = intval($data_get['hitung_lapangan_tabungan_masuk']);
+
+				// 	if (!empty($data_hitung_lapangan['tabungan_id'])) {
+				// 		$arr_data_tabungan = array(
+				// 			'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) + intval($data_get['hitung_lapangan_tabungan_masuk']),
+				// 			'tabungan_date_updated' => current_datetime_indo(),
+				// 		);
+
+				// 		$arr_data_riwayat_tabungan = array(
+				// 			'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+				// 			'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+				// 			'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
+				// 			'riwayat_tabungan_status' => 'masuk'
+				// 		);
+
+				// 		$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
+				// 		$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+				// 	} else {
+				// 		$arr_data_tabungan = array(
+				// 			'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+				// 			'tabungan_karyawan_id' => $data_get['karyawan_id'],
+				// 			'tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
+				// 			'tabungan_date_updated' => current_datetime_indo(),
+				// 		);
+
+				// 		$arr_data_riwayat_tabungan = array(
+				// 			'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+				// 			'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
+				// 			'riwayat_tabungan_status' => 'masuk'
+				// 		);
+
+				// 		$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
+				// 		$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+				// 		$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+				// 	}
+				// }
+
+				// // Jika Post Tabungan Masuk Tidak Kosong
+				// if (!empty($data_get['hitung_lapangan_tabungan_keluar'])) {
+				// 	if (intval($data_get['hitung_lapangan_tabungan_keluar']) > intval($data_hitung_lapangan['tabungan_saat_ini'])) {
+				// 		$this->session->set_flashdata('alert', 'error');
+				// 		$this->session->set_flashdata('message', 'Saldo tabungan tidak cukup');
+				// 		redirect("gaji?month={$data_get['month_set']}");
+				// 	} else {
+				// 		array_push($values_add, $data_get['hitung_lapangan_tabungan_keluar']);
+
+				// 		$data['gaji_tabungan_keluar'] = $data_get['hitung_lapangan_tabungan_keluar'];
+
+				// 		if (!empty($data_hitung_lapangan['tabungan_id'])) {
+				// 			$arr_data_tabungan = array(
+				// 				'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
+				// 				'tabungan_date_updated' => current_datetime_indo(),
+				// 			);
+
+				// 			$arr_data_riwayat_tabungan = array(
+				// 				'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+				// 				'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+				// 				'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
+				// 				'riwayat_tabungan_status' => 'keluar'
+				// 			);
+
+				// 			$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
+				// 			$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+				// 		} else {
+				// 			$arr_data_tabungan = array(
+				// 				'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+				// 				'tabungan_karyawan_id' => $data_get['karyawan_id'],
+				// 				'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
+				// 				'tabungan_date_updated' => current_datetime_indo(),
+				// 			);
+
+				// 			$arr_data_riwayat_tabungan = array(
+				// 				'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+				// 				'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+				// 				'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
+				// 				'riwayat_tabungan_status' => 'keluar'
+				// 			);
+
+				// 			$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
+				// 			$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+				// 			$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
+				// 		}
+				// 	}
+				// }
+
+				// $values = [$values_add, $values_subtract];
+				// $operations = ['add', 'subtract'];
+				// $data['gaji_total'] = hitung_total($values, $operations);
+				// $check_record = $this->GajiModel->find($data_get['karyawan_id'], $month_split);
+
+				// if (!empty($check_record)) {
+				// 	$this->GajiModel->update($check_record['gaji_id'], $data);
+				// } else {
+				// 	$data['gaji_id'] = 'GJ-' . substr(time(), 2);
+				// 	$data['gaji_karyawan_id'] = $data_get['karyawan_id'];
+				// 	$this->GajiModel->insert($data);
+				// }
 			}
 
 			$this->db->trans_commit();
@@ -248,9 +471,11 @@ class GajiController extends CI_Controller
 	public function edit($id, $month)
 	{
 		$month_set = explode('-', $month);
+		if ($month == 0) {
+			$month_set = [0];
+		}
 
 		$data = $this->GajiModel->find($id, $month_set);
-
 		echo json_encode($data);
 	}
 
@@ -263,7 +488,7 @@ class GajiController extends CI_Controller
 		$data_absensi = $this->AbsensiModel->find($id, $month_set);
 
 		$data_sum_potongan = $this->PotonganGajiModel->sumPotongan();
-		$total_potongan = $data['karyawan_status'] == 'lapangan tetap' || $data['karyawan_status'] == 'lapangan_training' ? $data_sum_potongan->total : 0;
+		$total_potongan = $data['karyawan_status'] == 'lapangan tetap' || $data['karyawan_status'] == 'lapangan training' ? $data_sum_potongan->total : 0;
 
 		$lain_atas = 0;
 		$data['gaji_tabungan_keluar'] ? $lain_atas += intval($data['gaji_tabungan_keluar']) : $lain_atas += 0;
@@ -271,7 +496,7 @@ class GajiController extends CI_Controller
 		$data['gaji_transport'] ? $lain_atas += intval($data['gaji_transport']) : $lain_atas += 0;
 
 		$total_atas = intval($data['gaji_pokok']) + intval($data['gaji_bonus']) + intval($lain_atas);
-		$total_bawah = intval($data['gaji_tabungan_masuk']) + intval($total_potongan) + intval($data['gaji_potongan_kemacetan']) + intval($data['gaji_potongan_tidak_masuk']);
+		$total_bawah = intval($data['gaji_pinjaman_bayar']) + intval($data['gaji_tabungan_masuk']) + intval($total_potongan) + intval($data['gaji_potongan_kemacetan']) + intval($data['gaji_potongan_tidak_masuk']);
 
 		$output = [
 			'slip_nama' => $data['karyawan_nama'],
@@ -313,70 +538,4 @@ class GajiController extends CI_Controller
 		var_dump($data);
 		die;
 	}
-
-	// public function detail($id)
-	// {
-	// 	$data = array(
-	// 		'gaji' => $this->GajiModel->lihat_gaji_perorang($id),
-	// 		'title' => 'Gaji'
-	// 	);
-
-	// 	// var_dump($id);
-	// 	// die;
-
-	// 	$this->load->view('templates/header', $data);
-	// 	$this->load->view('backend/gaji/detail', $data);
-	// 	$this->load->view('templates/footer');
-	// }
-
-	// public function lihat($id)
-	// {
-	// 	$data = $this->GajiModel->lihat_satu_gaji_by_id($id);
-	// 	echo json_encode($data);
-	// }
-
-	// public function pinjam($id)
-	// {
-	// 	$data = $this->GajiModel->lihat_satu_gaji_pinjam($id);
-	// 	echo json_encode($data);
-	// }
-
-	// public function bayar($id)
-	// {
-	// 	$data = array(
-	// 		'gaji_status' => 'sudah'
-	// 	);
-
-	// 	$save = $this->GajiModel->update_gaji($id, $data);
-
-	// 	if ($save > 0) {
-	// 		$gaji = $this->GajiModel->lihat_satu_gaji_pinjam($id);
-	// 		if ($gaji != null) {
-	// 			if (($gaji['pinjam_jumlah'] - $gaji['pinjam_bayar']) > 500000) {
-	// 				$dataGaji = array(
-	// 					'gaji_bayar_pinjaman' => 500000
-	// 				);
-	// 				$this->GajiModel->update_gaji($id, $dataGaji);
-	// 				$dataPinjam = array(
-	// 					'pinjam_bayar' => $gaji['pinjam_bayar'] + 500000
-	// 				);
-	// 				$this->PinjamanModel->update_pinjaman($gaji['pinjam_id'], $dataPinjam);
-	// 			} else {
-	// 				$bayar = $gaji['pinjam_jumlah'] - $gaji['pinjam_bayar'];
-	// 				$dataGaji = array(
-	// 					'gaji_bayar_pinjaman' => $bayar
-	// 				);
-	// 				$this->GajiModel->update_gaji($id, $dataGaji);
-	// 				$dataPinjam = array(
-	// 					'pinjam_bayar' => $gaji['pinjam_bayar'] + $bayar
-	// 				);
-	// 				$this->PinjamanModel->update_pinjaman($gaji['pinjam_id'], $dataPinjam);
-	// 			}
-	// 		}
-	// 		$this->session->set_flashdata('alert', 'update_gaji');
-	// 		redirect('gaji');
-	// 	} else {
-	// 		redirect('gaji');
-	// 	}
-	// }
 }
