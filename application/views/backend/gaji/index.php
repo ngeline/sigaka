@@ -535,9 +535,9 @@
 					<div class="row">
 						<div class="col-12">
 							<div class="tengah">
-								<h3><b>Koperasi [nama]</b></h3>
+								<h3><b>Primer Koperasi Pepabri</b></h3>
 							</div>
-							<div class="tengah">[alamat]]</div>
+							<div class="tengah">Jln Pamenang 1 Katang Kabupaten Kediri</div>
 							<hr>
 							<div class="tengah"><b><u>SLIP GAJI KARYAWAN</u></b></div>
 							<br>

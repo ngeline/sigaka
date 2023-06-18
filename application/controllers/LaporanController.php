@@ -38,15 +38,20 @@ class LaporanController extends CI_Controller
 
 	public function cetak($bulan)
 	{
+		$month_set = explode('-', $bulan);
+
 		$data = array(
-			'title' => 'Contoh PDF',
-			'content' => 'Ini adalah konten PDF'
+			'title' => 'Primer Koperasi Pepabri',
+			'sub_title' => 'Jln Pamenang 1 Katang Kabupaten Kediri',
+			'laporan' => $this->LaporanModel->findLaporan($month_set),
+			'bulan' => bulan($month_set[1]),
+			'tahun' => $month_set[0]
 		);
 
 		// Membaca template atau view yang ingin diekspor ke PDF
 		$html = $this->load->view('backend/laporan/pdf_template', $data, TRUE);
 
 		// Generate PDF
-		$this->pdfgenerator->generate($html, 'example', TRUE, 'A4', 'portrait');
+		$this->pdfgenerator->generate($html, 'example', TRUE, 'A4', 'landscape');
 	}
 }
