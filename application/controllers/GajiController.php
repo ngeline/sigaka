@@ -60,7 +60,7 @@ class GajiController extends CI_Controller
 
 	private function hitung_gaji_lapangan($id_karyawan, $month)
 	{
-		
+
 		$tanggal = strtotime($month); // Konversi nilai menjadi timestamp
 		$dua_bulan_sebelum = strtotime('-2 months', $tanggal); // Mengurangi 2 bulan dari tanggal
 		$hasil = date('Y-m', $dua_bulan_sebelum);
@@ -78,16 +78,21 @@ class GajiController extends CI_Controller
 		$total_angsuran = $data_storting['angsuran'] ? $data_storting['angsuran'] : 0;
 		$total_angsuran_hutang = $data_storting['angsuran_hutang'] ? $data_storting['angsuran_hutang'] : 0;
 		$total_kemacetan = $data_kemacetan ? $data_kemacetan->kemacetan_jumlah : 0;
-		$potongan_kemacetan = $data_kemacetan ? ($data_kemacetan->kemacetan_jumlah - $data_storting['angsuran_hutang']) * 0.04 : 0;
+		$potongan_kemacetan = $data_kemacetan ? round(($data_kemacetan->kemacetan_jumlah - $data_storting['angsuran_hutang']) / $jumlah_kehadiran) : 0;
 		$bon = $data_pinjaman ? $data_pinjaman['pinjaman_jumlah'] : 0;
 		$tabungan = $data_karyawan['tabungan_jumlah'] ? $data_karyawan['tabungan_jumlah'] : 0;
 
 		$data_index = 0;
 		if ($total_angsuran > 0 && $total_pinjaman > 0) {
-			$data_index = intval($total_angsuran) / intval($total_pinjaman);
+			$bagi_angsuran_dgn_pinjam = intval($total_angsuran) / intval($total_pinjaman);
+			$data_index = intval(($bagi_angsuran_dgn_pinjam * 100) % 100);
 		}
 
 		$data_sum_potongan = $this->PotonganGajiModel->sumPotongan();
+		$rata_rata_angsuran = 0;
+		if ($total_angsuran > 0) {
+			$rata_rata_angsuran = round($total_angsuran / $jumlah_kehadiran);
+		}
 
 		switch ($data_karyawan['karyawan_status']) {
 			case 'lapangan training':
@@ -95,36 +100,28 @@ class GajiController extends CI_Controller
 				break;
 			case 'lapangan tetap':
 				if (round($data_index) < 15) {
-					$gaji_pokok = $data_storting['avg_angsuran'];
+					$gaji_pokok = $rata_rata_angsuran;
 				} elseif (round($data_index) >= 15 && round($data_index) <= 19) {
-					$gaji_pokok = round(intval($data_storting['avg_angsuran'] * 1.2), -3);
-				} elseif (round($data_index) >= 20 && round($data_index) <= 25) {
-					$gaji_pokok = round(intval($data_storting['avg_angsuran'] * 1.4), -3);
+					$gaji_pokok = round(intval($rata_rata_angsuran * 1.2));
+				} elseif (round($data_index) >= 20) {
+					$gaji_pokok = round(intval($rata_rata_angsuran * 1.4));
+					if ($data_index == 21) {
+						$gaji_bonus = 10000;
+					} else if ($data_index == 22) {
+						$gaji_bonus = 20000;
+					} else if ($data_index == 23) {
+						$gaji_bonus = 30000;
+					} else if ($data_index == 24) {
+						$gaji_bonus = 40000;
+					} else if ($data_index >= 25) {
+						$gaji_bonus = 50000;
+					} else {
+						$gaji_bonus = 0;
+					}
 				}
 				break;
 			default:
 				$gaji_pokok = 0;
-				break;
-		}
-
-		switch ($data_index) {
-			case '21':
-				$gaji_bonus = 10000;
-				break;
-			case '22':
-				$gaji_bonus = 20000;
-				break;
-			case '23':
-				$gaji_bonus = 30000;
-				break;
-			case '24':
-				$gaji_bonus = 40000;
-				break;
-			case '25':
-				$gaji_bonus = 50000;
-				break;
-
-			default:
 				$gaji_bonus = 0;
 				break;
 		}
@@ -148,7 +145,7 @@ class GajiController extends CI_Controller
 			'total_kemacetan' => $total_kemacetan,
 			'index' => $data_index,
 			'gaji_pokok' => $gaji_pokok,
-			'gaji_bonus' => $data_karyawan['karyawan_status'] == 'lapangan tetap' ? $gaji_bonus : 0,
+			'gaji_bonus' => $gaji_bonus,
 			'potongan' => $data_sum_potongan->total,
 			'potongan_kemacetan' => $data_karyawan['karyawan_status'] == 'lapangan tetap' ? $potongan_kemacetan : 0,
 			'potongan_kemacetan_bulan' => bulan_with_zero($hasil_explode[1]),
