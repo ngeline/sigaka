@@ -61,10 +61,11 @@ class GajiController extends CI_Controller
 	private function hitung_gaji_lapangan($id_karyawan, $month)
 	{
 
-		$tanggal = strtotime($month); // Konversi nilai menjadi timestamp
-		$dua_bulan_sebelum = strtotime('-2 months', $tanggal); // Mengurangi 2 bulan dari tanggal
-		$hasil = date('Y-m', $dua_bulan_sebelum);
-		$hasil_explode = explode('-', $hasil);
+		// $tanggal = strtotime($month); // Konversi nilai menjadi timestamp
+		// $dua_bulan_sebelum = strtotime('-2 months', $tanggal); // Mengurangi 2 bulan dari tanggal
+		// $hasil = date('Y-m', $dua_bulan_sebelum);
+		// $hasil_explode = explode('-', $hasil);
+		$hasil_explode = explode('-', $month);
 
 		$month_set = explode('-', $month);
 
