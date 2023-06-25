@@ -60,6 +60,7 @@ $route['dashboard'] = 'DashboardController';
 
 $route['login'] = 'AuthController/login';
 $route['logout'] = 'AuthController/logout';
+$route['pengguna/ubah/password'] = 'AuthController/ubahPassword';
 
 $route['default_controller'] = 'Welcome';
 $route['404_override'] = '';
@@ -102,6 +103,8 @@ $route['storting/delete/(:any)'] = 'StortingController/delete/$1';
 $route['storting/riwayat'] = 'StortingController/indexRiwayat';
 $route['storting/riwayat/update'] = 'StortingController/updateRiwayat';
 $route['storting/riwayat/update/semua'] = 'StortingController/updateRiwayatSemua';
+$route['storting/riwayat/update/status/validasi'] = 'StortingController/updateRiwayatStatusValidasi';
+$route['storting/riwayat/update/status/pending'] = 'StortingController/updateRiwayatStatusPending';
 
 $route['gaji'] = 'GajiController';
 $route['gaji/hitung/(:any)/(:any)/(:any)'] = 'GajiController/hitung/$1/$2/$3';

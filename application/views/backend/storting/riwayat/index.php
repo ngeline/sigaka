@@ -1,48 +1,6 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="card">
-			<?php
-			if ($this->session->flashdata('alert') == 'insert') :
-			?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil ditambahkan
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'update') :
-			?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil diupdate
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'delete') :
-			?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil dihapus
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'error') :
-			?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<?= $this->session->flashdata('message'); ?>
-				</div>
-			<?php
-			endif;
-			$this->session->set_flashdata('alert', '');
-			$this->session->set_flashdata('message', '');
-			?>
-
 			<div class="card-header">
 				<h1 style="text-align: center">Data Riwayat Storting</h1>
 				<button type="button" class="btn btn-primary btn-bg-gradient-x-purple-blue box-shadow-2 storting-riwayat-kembali">
@@ -54,14 +12,23 @@
 				<div class="data-storting-riwayat" data-id="<?= $id_karyawan ?>"></div>
 				<div class="row">
 					<!-- <div class="col-sm-3 mb-2"> -->
-						<!-- <label class="text-danger note-filter" style="font-size: 10pt;">*) Pilih untuk filter storting riwayat</label> -->
-						<input type="hidden" class="form-control storting-riwayat-month-picker" value="<?= $date_set ?>">
+					<!-- <label class="text-danger note-filter" style="font-size: 10pt;">*) Pilih untuk filter storting riwayat</label> -->
+					<input type="hidden" class="form-control storting-riwayat-month-picker" value="<?= $date_set ?>">
 					<!-- </div> -->
-					<div class="col-md-4 mb-2 pl-2">
-						<label>Total Kemacetan Bulan Ini</label>
+					<div class="col-md-3 mb-2 pl-2">
+						<?php if ($kemacetan->kemacetan_status == 'pending') : ?>
+							<label><span class="badge badge-sm badge-danger"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
+						<?php else : ?>
+							<label><span class="badge badge-sm badge-success"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
+						<?php endif; ?>
 						<input type="number" class="form-control" name="kemacetan" id="edit_total_kemacetan" placeholder="Masukkan jumlah kemacetan" value="<?= $kemacetan ? $kemacetan->kemacetan_jumlah : '' ?>" autocomplete="off" readonly required>
 					</div>
-					<div class="col-md-8 text-right mb-2 pr-2">
+					<div class="col-md-5 mb-2">
+						<div class="btn-group mt-1 pt-1">
+							<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2 btn-validasi-status-kemacetan" title="Validasi kemacetan"><i class="ft-check"></i></button>
+						</div>
+					</div>
+					<div class="col-md-4 text-right mb-2 pr-2">
 						<label>Klik untuk validasi semua status bulan ini</label><br>
 						<button type="button" class="btn btn-primary btn-bg-gradient-x-purple-red box-shadow-2 storting-riwayat-validasi-semua">
 							<i class="ft-check"></i> Validasi Semua

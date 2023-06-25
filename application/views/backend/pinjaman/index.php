@@ -1,49 +1,6 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="card">
-
-			<?php
-			if ($this->session->flashdata('alert') == 'insert') :
-			?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil ditambahkan
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'update') :
-			?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil diupdate
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'delete') :
-			?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil dihapus
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'error') :
-			?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<?= $this->session->flashdata('message'); ?>
-				</div>
-			<?php
-			endif;
-			$this->session->set_flashdata('alert', '');
-			$this->session->set_flashdata('message', '');
-			?>
-
 			<div class="card-header">
 				<h1 style="text-align: center">Data Pinjaman</h1>
 				<?php if ($this->session->userdata('session_hak_akses') == 'karyawan' && $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap') : ?>

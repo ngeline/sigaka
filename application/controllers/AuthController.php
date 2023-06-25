@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class AuthController extends CI_Controller
 {
@@ -56,7 +56,7 @@ class AuthController extends CI_Controller
 			$data = array(
 				'title' => 'Login'
 			);
-			$this->load->view('backend/auth/login',$data);
+			$this->load->view('backend/auth/login', $data);
 		}
 	}
 
@@ -64,5 +64,24 @@ class AuthController extends CI_Controller
 	{
 		$this->session->sess_destroy();
 		redirect(base_url('login'));
+	}
+
+	public function ubahPassword()
+	{
+		$data = $this->input->post();
+
+		if ($data['password'] !== $data['confirm_password']) {
+			$this->session->set_flashdata('alert', 'error');
+			$this->session->set_flashdata('message', 'Konfirmasi sandi tidak sama dengan sandi baru');
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		
+		$array_data_pengguna = [
+			'pengguna_password' => md5($data['password']),
+		];
+		
+		$this->PenggunaModel->update($this->session->userdata('session_id'), $array_data_pengguna);
+		$this->session->set_flashdata('alert', 'update');
+		redirect($_SERVER['HTTP_REFERER']);
 	}
 }

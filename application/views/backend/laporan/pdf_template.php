@@ -40,6 +40,12 @@
 		.table-header {
 			font-weight: bold;
 		}
+
+		.kiri {
+			text-align: center;
+			padding-left: 70%;
+			font-size: 10pt;
+		}
 	</style>
 </head>
 
@@ -89,7 +95,13 @@
 							<td><?= $value['gaji_uang_makan'] ? nominal($value['gaji_uang_makan']) : nominal(0) ?></td>
 							<td><?= $value['gaji_transport'] ? nominal($value['gaji_transport']) : nominal(0) ?></td>
 							<td><?= $value['gaji_pinjaman_bayar'] ? nominal($value['gaji_pinjaman_bayar']) : nominal(0) ?></td>
-							<td><?= ($value['gaji_tabungan_masuk'] ? '(+) ' . nominal($value['gaji_tabungan_masuk']) : $value['gaji_tabungan_keluar']) ? '(-) ' . nominal($value['gaji_tabungan_keluar']) : nominal(0) ?></td>
+							<?php if ($value['gaji_tabungan_masuk']) : ?>
+								<td><?= '(+) ' . nominal($value['gaji_tabungan_masuk']) ?></td>
+							<?php elseif ($value['gaji_tabungan_keluar']) : ?>
+								<td><?= '(-) ' . nominal($value['gaji_tabungan_keluar']) ?></td>
+							<?php else : ?>
+								<td><?= nominal(0) ?></td>
+							<?php endif; ?>
 							<td><?= $value['gaji_potongan_kemacetan'] ? nominal($value['gaji_potongan_kemacetan']) : nominal(0) ?></td>
 							<td><?= $value['gaji_potongan_tidak_masuk'] ? nominal($value['gaji_potongan_tidak_masuk']) : nominal(0) ?></td>
 							<td><?= $value['gaji_potongan_total'] ? nominal($value['gaji_potongan_total']) : nominal(0) ?></td>
@@ -119,6 +131,13 @@
 				</tfoot>
 			<?php endif; ?>
 		</table>
+		<div class="kiri">
+			<br><br><br>
+			<p><?= longdate_indo(date('Y-m-d')) ?></p>
+			<p>Mengetahui</p>
+			<br><br><br>
+			<p><b><u>Muhammad Sayfuddin</u></b></p>
+		</div>
 	</div>
 </body>
 

@@ -1,36 +1,6 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="card">
-			<?php
-			if ($this->session->flashdata('alert') == 'tambah_jabatan'):
-				?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil ditambahkan
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'update_jabatan'):
-				?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil diupdate
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'hapus_jabatan'):
-				?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil dihapus
-				</div>
-			<?php
-			endif;
-			?>
 			<div class="card-header">
 				<h1 style="text-align: center">Data Jabatan</h1>
 				<?php if ($this->session->userdata('session_hak_akses') == 'manajer'):?>

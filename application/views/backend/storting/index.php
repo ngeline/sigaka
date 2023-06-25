@@ -1,48 +1,6 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="card">
-			<?php
-			if ($this->session->flashdata('alert') == 'insert') :
-			?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil ditambahkan
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'update') :
-			?>
-				<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil diupdate
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'delete') :
-			?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					Data berhasil dihapus
-				</div>
-			<?php
-			elseif ($this->session->flashdata('alert') == 'error') :
-			?>
-				<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<?= $this->session->flashdata('message'); ?>
-				</div>
-			<?php
-			endif;
-			$this->session->set_flashdata('alert', '');
-			$this->session->set_flashdata('message', '');
-			?>
-
 			<div class="card-header">
 				<h1 style="text-align: center">Data Storting</h1>
 				<?php if ($this->session->userdata('session_hak_akses') == 'karyawan') : ?>
@@ -63,17 +21,23 @@
 							<?= form_open('storting/kemacetan-store') ?>
 							<input type="hidden" name="kemacetan_date" value="<?= $date_set ?>">
 							<div class="row">
-								<div class="col-md-4 border-left border-1 mb-2">
-									<label>Total Kemacetan Bulan Ini</label>
+								<div class="col-md-5 border-left border-1 mb-2">
+									<?php if ($kemacetan->kemacetan_status == 'pending') : ?>
+										<label><span class="badge badge-sm badge-danger"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
+									<?php else : ?>
+										<label><span class="badge badge-sm badge-success"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
+									<?php endif; ?>
 									<input type="number" class="form-control" name="kemacetan" id="edit_total_kemacetan" placeholder="Masukkan jumlah kemacetan" value="<?= $kemacetan ? $kemacetan->kemacetan_jumlah : '' ?>" autocomplete="off" readonly required>
 								</div>
-								<div class="col-md-4 mb-2">
-									<div class="btn-group mt-1 pt-1">
-										<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2 btn-kemacetan-edit" title="Edit kemacetan"><i class="ft-edit"></i></button>
-										<button type="submit" class="btn btn-primary btn-md ml-1 btn-bg-gradient-x-purple-blue box-shadow-2 btn-kemacetan-save" title="Simpan perubahan" hidden><i class="ft-check"></i></button>
-										<button type="button" class="btn btn-warning btn-md ml-1 btn-bg-gradient-x-purple-red box-shadow-2 btn-kemacetan-cancel" title="Cancel perubahan" hidden><i class="ft-trash"></i></button>
+								<?php if ($kemacetan->kemacetan_status != 'tervalidasi') : ?>
+									<div class="col-md-4 mb-2">
+										<div class="btn-group mt-1 pt-1">
+											<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2 btn-kemacetan-edit" title="Edit kemacetan"><i class="ft-edit"></i></button>
+											<button type="submit" class="btn btn-primary btn-md ml-1 btn-bg-gradient-x-purple-blue box-shadow-2 btn-kemacetan-save" title="Simpan perubahan" hidden><i class="ft-check"></i></button>
+											<button type="button" class="btn btn-warning btn-md ml-1 btn-bg-gradient-x-purple-red box-shadow-2 btn-kemacetan-cancel" title="Cancel perubahan" hidden><i class="ft-trash"></i></button>
+										</div>
 									</div>
-								</div>
+								<?php endif; ?>
 							</div>
 							<?= form_close() ?>
 						<?php endif; ?>

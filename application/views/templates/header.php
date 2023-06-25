@@ -85,6 +85,8 @@
 										<?= $this->session->userdata('session_hak_akses'); ?>
 										</span></a>
 									<div class="dropdown-divider"></div>
+									<a class="dropdown-item" href="javascript:void(0)" class="edit-password" data-toggle="modal" data-target="#ubahPasswordModal"><i class="ft-lock"></i>
+										Ubah Password</a>
 									<a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="ft-power"></i>
 										Logout</a>
 								</div>
@@ -164,4 +166,96 @@
 			<div class="content-wrapper-before"></div>
 			<div class="content-header row">
 			</div>
+			<!-- Modal ubah -->
+			<div class="modal fade text-left" id="ubahPasswordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 class="modal-title" id="myModalLabel35"> Ubah Password</h3>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<?= form_open('pengguna/ubah/password') ?>
+						<div class="modal-body">
+							<fieldset class="form-group floating-label-form-group">
+								<label for="hadir">Kata sandi</label>
+								<input type="password" class="form-control" name="password" id="password" placeholder="Masukkan sandi baru" autocomplete="off" required>
+							</fieldset>
+							<fieldset class="form-group floating-label-form-group">
+								<label for="hadir">Konfirmasi Kata Sandi</label>
+								<input type="password" class="form-control" name="confirm_password" id="confirm-password" placeholder="Masukkan konfrimasi sandi baru" autocomplete="off" required>
+							</fieldset>
+						</div>
+						<div class="modal-footer">
+							<input type="reset" class="btn btn-secondary btn-bg-gradient-x-red-pink" data-dismiss="modal" value="Tutup">
+							<input type="submit" class="btn btn-primary btn-bg-gradient-x-blue-cyan" name="simpan" value="Simpan">
+						</div>
+						<?= form_close() ?>
+					</div>
+				</div>
+			</div>
 			<div class="content-body"><!-- Revenue, Hit Rate & Deals -->
+				<?php
+				if ($this->session->flashdata('alert') == 'login_sukses') :
+				?>
+					<div class="alert alert-success alert-dismissible animated fadeInDown" style="position: absolute; width: 100%; z-index: 2" id="feedback" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						Berhasil Login <?= $this->session->userdata('session_hak_akses'); ?>
+						, <?= $this->session->userdata('session_nama'); ?>
+					</div>
+				<?php
+				elseif ($this->session->flashdata('alert') == 'sudah_login') :
+				?>
+					<div class="alert alert-warning alert-dismissible animated fadeInDown" style="position: absolute; width: 100%; z-index: 2" id="feedback" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						Sudah Login
+					</div>
+				<?php
+				endif;
+				?>
+				<?php
+				if ($this->session->flashdata('alert') == 'insert') :
+				?>
+					<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						Data berhasil ditambahkan
+					</div>
+				<?php
+				elseif ($this->session->flashdata('alert') == 'update') :
+				?>
+					<div class="alert alert-success alert-dismissible animated fadeInDown" id="feedback" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						Data berhasil diupdate
+					</div>
+				<?php
+				elseif ($this->session->flashdata('alert') == 'delete') :
+				?>
+					<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						Data berhasil dihapus
+					</div>
+				<?php
+				elseif ($this->session->flashdata('alert') == 'error') :
+				?>
+					<div class="alert alert-danger alert-dismissible animated fadeInDown" id="feedback" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<?= $this->session->flashdata('message'); ?>
+					</div>
+				<?php
+				endif;
+				$this->session->set_flashdata('alert', '');
+				$this->session->set_flashdata('message', '');
+				?>

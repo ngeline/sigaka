@@ -16,6 +16,7 @@ class LaporanModel extends CI_Model{
 		$this->db->join('sigaka_karyawan as sk', "sg.gaji_karyawan_id = sk.karyawan_id", 'left');
 		$this->db->where('gaji_bulan_ke', $bulan[1]);
 		$this->db->where('gaji_tahun_ke', $bulan[0]);
+		$this->db->where('gaji_status', 'terbayar');
 		$this->db->order_by('gaji_date_created', 'DESC');
 		$this->db->order_by('gaji_date_updated', 'DESC');
 

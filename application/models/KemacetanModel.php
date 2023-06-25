@@ -27,7 +27,7 @@ class KemacetanModel extends CI_Model
 
 	public function find_kemacetan_karyawan($id, $bulan = [])
 	{
-		$this->db->select('kemacetan_id, kemacetan_jumlah');
+		$this->db->select('kemacetan_id, kemacetan_jumlah, kemacetan_status');
 		$this->db->from('sigaka_kemacetan as ss');
 		$this->db->join('sigaka_karyawan as sk', "ss.kemacetan_karyawan_id = sk.karyawan_id", 'left');
 		$this->db->where('kemacetan_bulan_ke', $bulan[1]);
@@ -49,6 +49,15 @@ class KemacetanModel extends CI_Model
 	public function update($id, $data)
 	{
 		$this->db->where('kemacetan_id', $id);
+		$this->db->update('sigaka_kemacetan', $data);
+		return $this->db->affected_rows();
+	}
+
+	public function updateStatusByBulan($id, $data, $bulan = [])
+	{
+		$this->db->where('kemacetan_bulan_ke', $bulan[1]);
+		$this->db->where('kemacetan_tahun_ke', $bulan[0]);
+		$this->db->where('kemacetan_karyawan_id', $id);
 		$this->db->update('sigaka_kemacetan', $data);
 		return $this->db->affected_rows();
 	}

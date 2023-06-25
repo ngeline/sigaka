@@ -14,7 +14,7 @@ class StortingController extends CI_Controller
 		}
 
 		$this->load->library('form_validation');
-		$this->load->model(['StortingModel', 'KemacetanModel']);
+		$this->load->model(['StortingModel', 'KemacetanModel', 'GajiModel']);
 
 		$this->load->helper(['nominal_helper', 'tgl_indo_helper', 'main_helper']);
 	}
@@ -134,6 +134,14 @@ class StortingController extends CI_Controller
 			'storting_date_updated' => current_datetime_indo(),
 		];
 
+		$checking_gaji = $this->GajiModel->find($karyawan_id, [0 => $tahun, 1 => $bulan]);
+
+		if (!empty($checking_gaji['gaji_id'])) {
+			$this->session->set_flashdata('alert', 'error');
+			$this->session->set_flashdata('message', 'Anda tidak diperbolehkan menambahkan storting, karena gaji sudah dihitung!');
+			redirect('storting');
+		}
+
 		$this->StortingModel->insert($array_data);
 
 		$this->session->set_flashdata('alert', 'insert');
@@ -233,6 +241,42 @@ class StortingController extends CI_Controller
 		];
 
 		$this->StortingModel->updateSemua($id_karyawan, $array_data, $date_array);
+
+		$this->session->set_flashdata('alert', 'update');
+		redirect("storting/riwayat?month={$date}&id={$id_karyawan}");
+	}
+
+	public function updateRiwayatStatusValidasi()
+	{
+		$date = $this->input->get('date');
+		$id_karyawan = $this->input->get('id_karyawan');
+
+		$date_array = explode('-', $date);
+
+		$array_data = [
+			'kemacetan_status' =>'tervalidasi',
+			'kemacetan_date_updated' => current_datetime_indo(),
+		];
+
+		$this->KemacetanModel->updateStatusByBulan($id_karyawan, $array_data, $date_array);
+
+		$this->session->set_flashdata('alert', 'update');
+		redirect("storting/riwayat?month={$date}&id={$id_karyawan}");
+	}
+
+	public function updateRiwayatStatusPending()
+	{
+		$date = $this->input->get('date');
+		$id_karyawan = $this->input->get('id_karyawan');
+
+		$date_array = explode('-', $date);
+
+		$array_data = [
+			'kemacetan_status' =>'pending',
+			'kemacetan_date_updated' => current_datetime_indo(),
+		];
+
+		$this->KemacetanModel->updateStatusByBulan($id_karyawan, $array_data, $date_array);
 
 		$this->session->set_flashdata('alert', 'update');
 		redirect("storting/riwayat?month={$date}&id={$id_karyawan}");

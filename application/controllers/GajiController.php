@@ -60,7 +60,6 @@ class GajiController extends CI_Controller
 
 	private function hitung_gaji_lapangan($id_karyawan, $month)
 	{
-
 		// $tanggal = strtotime($month); // Konversi nilai menjadi timestamp
 		// $dua_bulan_sebelum = strtotime('-2 months', $tanggal); // Mengurangi 2 bulan dari tanggal
 		// $hasil = date('Y-m', $dua_bulan_sebelum);
@@ -98,12 +97,15 @@ class GajiController extends CI_Controller
 		switch ($data_karyawan['karyawan_status']) {
 			case 'lapangan training':
 				$gaji_pokok = 1000000;
+				$gaji_bonus = 0;
 				break;
 			case 'lapangan tetap':
 				if (round($data_index) < 15) {
 					$gaji_pokok = $rata_rata_angsuran;
+					$gaji_bonus = 0;
 				} elseif (round($data_index) >= 15 && round($data_index) <= 19) {
 					$gaji_pokok = round(intval($rata_rata_angsuran * 1.2));
+					$gaji_bonus = 0;
 				} elseif (round($data_index) >= 20) {
 					$gaji_pokok = round(intval($rata_rata_angsuran * 1.4));
 					if ($data_index == 21) {
@@ -249,8 +251,9 @@ class GajiController extends CI_Controller
 						$this->TabunganModel->update($data_hitung_rekap['tabungan_id'], $arr_data_tabungan);
 						$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 					} else {
+						$kode_tabungan = 'TB-' . substr(time(), 4) . rand(11, 99);
 						$arr_data_tabungan = array(
-							'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+							'tabungan_id' => $kode_tabungan,
 							'tabungan_karyawan_id' => $data_get['karyawan_id'],
 							'tabungan_jumlah' => $data_get['hitung_rekap_tabungan_masuk'],
 							'tabungan_date_updated' => current_datetime_indo(),
@@ -258,12 +261,13 @@ class GajiController extends CI_Controller
 
 						$arr_data_riwayat_tabungan = array(
 							'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+							'riwayat_id_tabungan' => $kode_tabungan,
 							'riwayat_tabungan_jumlah' => $data_get['hitung_rekap_tabungan_masuk'],
 							'riwayat_tabungan_status' => 'masuk'
 						);
 
 						$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
-						$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+						// $arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
 						$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 					}
 				}
@@ -295,8 +299,9 @@ class GajiController extends CI_Controller
 							$this->TabunganModel->update($data_hitung_rekap['tabungan_id'], $arr_data_tabungan);
 							$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 						} else {
+							$kode_tabungan = 'TB-' . substr(time(), 4) . rand(11, 99);
 							$arr_data_tabungan = array(
-								'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+								'tabungan_id' => $kode_tabungan,
 								'tabungan_karyawan_id' => $data_get['karyawan_id'],
 								'tabungan_jumlah' => intval($data_hitung_rekap['tabungan_saat_ini']) - intval($data_get['hitung_rekap_tabungan_keluar']),
 								'tabungan_date_updated' => current_datetime_indo(),
@@ -304,13 +309,13 @@ class GajiController extends CI_Controller
 
 							$arr_data_riwayat_tabungan = array(
 								'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
-								'riwayat_id_tabungan' => $data_hitung_rekap['tabungan_id'],
+								'riwayat_id_tabungan' => $kode_tabungan,
 								'riwayat_tabungan_jumlah' => $data_get['hitung_rekap_tabungan_keluar'],
 								'riwayat_tabungan_status' => 'keluar'
 							);
 
 							$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
-							$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+							// $arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
 							$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 						}
 					}
@@ -375,8 +380,9 @@ class GajiController extends CI_Controller
 						$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
 						$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 					} else {
+						$kode_tabungan = 'TB-' . substr(time(), 4) . rand(11, 99);
 						$arr_data_tabungan = array(
-							'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+							'tabungan_id' => $kode_tabungan,
 							'tabungan_karyawan_id' => $data_get['karyawan_id'],
 							'tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
 							'tabungan_date_updated' => current_datetime_indo(),
@@ -384,12 +390,12 @@ class GajiController extends CI_Controller
 
 						$arr_data_riwayat_tabungan = array(
 							'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
+							'riwayat_id_tabungan' => $kode_tabungan,
 							'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_masuk'],
 							'riwayat_tabungan_status' => 'masuk'
 						);
 
 						$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
-						$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
 						$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 					}
 				}
@@ -421,8 +427,9 @@ class GajiController extends CI_Controller
 							$this->TabunganModel->update($data_hitung_lapangan['tabungan_id'], $arr_data_tabungan);
 							$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 						} else {
+							$kode_tabungan = 'TB-' . substr(time(), 4) . rand(11, 99);
 							$arr_data_tabungan = array(
-								'tabungan_id' => 'TB-' . substr(time(), 4) . rand(11, 99),
+								'tabungan_id' => $kode_tabungan,
 								'tabungan_karyawan_id' => $data_get['karyawan_id'],
 								'tabungan_jumlah' => intval($data_hitung_lapangan['tabungan_saat_ini']) - intval($data_get['hitung_lapangan_tabungan_keluar']),
 								'tabungan_date_updated' => current_datetime_indo(),
@@ -430,13 +437,13 @@ class GajiController extends CI_Controller
 
 							$arr_data_riwayat_tabungan = array(
 								'riwayat_tabungan_id' => 'RTB-' . substr(time(), 4) . rand(11, 99),
-								'riwayat_id_tabungan' => $data_hitung_lapangan['tabungan_id'],
+								'riwayat_id_tabungan' => $kode_tabungan,
 								'riwayat_tabungan_jumlah' => $data_get['hitung_lapangan_tabungan_keluar'],
 								'riwayat_tabungan_status' => 'keluar'
 							);
 
 							$data_tabungan_id = $this->TabunganModel->insert($arr_data_tabungan);
-							$arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
+							// $arr_data_riwayat_tabungan['riwayat_id_tabungan'] = $data_tabungan_id;
 							$this->TabunganModel->insert_riwayat($arr_data_riwayat_tabungan);
 						}
 					}
