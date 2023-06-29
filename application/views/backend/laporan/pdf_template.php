@@ -75,6 +75,7 @@
 					<th>Potongan Tidak Masuk</th>
 					<th>Potongan Lainnya</th>
 					<th>Total Gaji</th>
+					<th>Paraf</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -106,6 +107,7 @@
 							<td><?= $value['gaji_potongan_tidak_masuk'] ? nominal($value['gaji_potongan_tidak_masuk']) : nominal(0) ?></td>
 							<td><?= $value['gaji_potongan_total'] ? nominal($value['gaji_potongan_total']) : nominal(0) ?></td>
 							<td><?= nominal($value['gaji_total']) ?></td>
+							<td>&nbsp;</td>
 						</tr>
 					<?php
 						$no++;
@@ -126,7 +128,7 @@
 						<td colspan="14">
 							<center><b>Total Pengeluaran Gaji </b></center>
 						</td>
-						<td><b><?= nominal($sum_total) ?></b></td>
+						<td colspan="2"><b><?= nominal($sum_total) ?></b></td>
 					</tr>
 				</tfoot>
 			<?php endif; ?>
