@@ -22,14 +22,16 @@
 							<input type="hidden" name="kemacetan_date" value="<?= $date_set ?>">
 							<div class="row">
 								<div class="col-md-5 border-left border-1 mb-2">
-									<?php if ($kemacetan->kemacetan_status == 'pending') : ?>
+									<?php if (!empty($kemacetan) && $kemacetan->kemacetan_status == 'pending') : ?>
 										<label><span class="badge badge-sm badge-danger"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
-									<?php else : ?>
+									<?php elseif (!empty($kemacetan) && $kemacetan->kemacetan_status == 'tervalidasi') : ?>
 										<label><span class="badge badge-sm badge-success"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
+									<?php else : ?>
+										<label><span class="badge badge-sm badge-warning">belum Input</span> | Total Kemacetan Bulan Ini</label>
 									<?php endif; ?>
 									<input type="number" class="form-control" name="kemacetan" id="edit_total_kemacetan" placeholder="Masukkan jumlah kemacetan" value="<?= $kemacetan ? $kemacetan->kemacetan_jumlah : '' ?>" autocomplete="off" readonly required>
 								</div>
-								<?php if ($kemacetan->kemacetan_status != 'tervalidasi') : ?>
+								<?php if (empty($kemacetan) || $kemacetan->kemacetan_status != 'tervalidasi') : ?>
 									<div class="col-md-4 mb-2">
 										<div class="btn-group mt-1 pt-1">
 											<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2 btn-kemacetan-edit" title="Edit kemacetan"><i class="ft-edit"></i></button>
