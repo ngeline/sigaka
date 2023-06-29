@@ -10,8 +10,8 @@
 	<meta name="keywords" content="Sistem Informasi Penggajian Selkom Group">
 	<meta name="author" content="Jihad">
 	<title><?= $title ?> - PRIMKOPABRI</title>
-	<link rel="apple-touch-icon" href="<?= base_url() ?>assets/images/ico/apple-icon-120.png">
-	<link rel="shortcut icon" type="image/x-icon" href="<?= base_url() ?>assets/images/logo/63-512.png">
+	<link rel="apple-touch-icon" href="<?= base_url() ?>assets/images/logo koperasi.png">
+	<link rel="shortcut icon" type="image/x-icon" href="<?= base_url() ?>assets/images/logo koperasi.png">
 	<link href="<?= base_url() ?>assets/css/fonts/css93c2.css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700" rel="stylesheet">
 
 	<!-- BEGIN: Vendor CSS-->
@@ -105,7 +105,7 @@
 		<div class="navbar-header">
 			<ul class="nav navbar-nav flex-row">
 				<li class="nav-item mr-auto"><a class="navbar-brand" href="<?= base_url('dashboard') ?>">
-						<img class="brand-logo" alt="Chameleon admin logo" src="<?= base_url() ?>assets/images/logo/63-512.png" />
+						<img class="brand-logo" alt="Chameleon admin logo" src="<?= base_url() ?>assets/images/logo koperasi.png" />
 						<h3 class="brand-text">PRIMKOPPABRI</h3>
 					</a></li>
 				<li class="nav-item d-md-none"><a class="nav-link close-navbar"><i class="ft-x"></i></a></li>
