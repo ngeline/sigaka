@@ -803,7 +803,7 @@ $(document).ready(function () {
 	});
 
 	$(document).on('click', '#cetak_laporan', function (e) {
-		var url = $('.gaji-month-picker').val();
+		var url = $('.laporan-month-picker').val();
 		// window.location.href = '/sigaka/laporan/cetak/' + url;
 		window.open('/sigaka/laporan/cetak/' + url, "_blank");
 	});
