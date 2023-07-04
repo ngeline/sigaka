@@ -31,7 +31,7 @@ class StortingController extends CI_Controller
 			'year_set' => $month_set[0]
 		);
 
-		if ($this->session->has_userdata('session_karyawan_id')) {
+		if ($this->session->userdata('session_karyawan_status') != 'kasir' && $this->session->userdata('session_karyawan_status') != null) {
 			$id_karyawan = $this->session->userdata('session_karyawan_id');
 			$data['storting'] = $this->StortingModel->findAll($id_karyawan, $month_set);
 			$data['kemacetan'] = $this->KemacetanModel->find_kemacetan_karyawan($id_karyawan, $month_set);

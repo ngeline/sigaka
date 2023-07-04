@@ -6,7 +6,7 @@
 			</div>
 
 			<div class="card-body">
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+				<?php if ($this->session->userdata('session_karyawan_status') == 'kasir' || $this->session->userdata('session_karyawan_status') == null) : ?>
 					<div class="text-danger note-filter" style="font-size: 10pt;">
 						*) Pilih untuk filter absensi
 					</div>
@@ -25,7 +25,7 @@
 							<th>Tahun</th>
 							<th>Kehadiran</th>
 							<th>Ketidakhadiran</th>
-							<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+							<?php if ($this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 								<td style="text-align: center"><i class="ft-settings spinner"></i></td>
 							<?php endif; ?>
 						</tr>
@@ -42,7 +42,7 @@
 								<td><?= $value['absensi_tahun_ke'] ? $value['absensi_tahun_ke'] : $year_set ?></td>
 								<td><?= $value['absensi_kehadiran'] ? $value['absensi_kehadiran'] : '-' ?></td>
 								<td><?= $value['absensi_ketidakhadiran'] ? $value['absensi_ketidakhadiran'] : '-' ?></td>
-								<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+								<?php if ($this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 									<td>
 										<?php if ($date_set == date('Y-m')) : ?>
 											<button class="btn btn-success btn-sm  btn-bg-gradient-x-blue-green box-shadow-2 absensi-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['karyawan_id'] ?>"><i class="ft-edit"></i></button>

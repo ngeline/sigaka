@@ -607,7 +607,7 @@ $(document).ready(function () {
 					$('#text_name_karyawan').text(response.karyawan_nama + ' Bulan ' + response.bulan + ' Tahun ' + response.tahun);
 					$('#hitung_karyawan_status').val(response.karyawan_status);
 					$('#hitung_month_set').val(response.month_set);
-					if (response.karyawan_status == 'rekap training' || response.karyawan_status == 'rekap tetap') {
+					if (response.karyawan_status == 'rekap training' || response.karyawan_status == 'rekap tetap' || response.karyawan_status == 'kasir') {
 						$('#rekap').show();
 						$('#hitung_status_karyawan').val(response.karyawan_status);
 						$('#hitung_rekap_total_pinjam').val(response.pinjaman_bayar);
@@ -615,7 +615,7 @@ $(document).ready(function () {
 						$('#hitung_rekap_jumlah_kehadiran').val(response.jumlah_kehadiran);
 						$('#hitung_rekap_uang_makan').val(response.uang_makan);
 						$('#hitung_rekap_uang_transport').val(response.uang_transport);
-						if (response.karyawan_status == 'rekap tetap') {
+						if (response.karyawan_status == 'rekap tetap' || response.karyawan_status == 'kasir') {
 							$('#hitung_rekap_tabungan_saat_ini').val(response.tabungan_saat_ini);
 							$('.rekap_tetap').show();
 						}
@@ -797,7 +797,7 @@ $(document).ready(function () {
 	// JS Laporan
 	// ------------------------------------------------------------------------------------------
 
-	$(document).on('change', '.gaji-month-picker', function (e) {
+	$(document).on('change', '.laporan-month-picker', function (e) {
 		var url = $(this).val();
 		window.location.href = '/sigaka/laporan?month=' + url;
 	});

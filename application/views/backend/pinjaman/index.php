@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h1 style="text-align: center">Data Pinjaman</h1>
-				<?php if ($this->session->userdata('session_hak_akses') == 'karyawan' && $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap') : ?>
+				<?php if ($this->session->userdata('session_hak_akses') == 'karyawan' && $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap' || $this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 					<button type="button" class="btn btn-primary btn-bg-gradient-x-purple-blue box-shadow-2" data-toggle="modal" data-target="#tambah">
 						<i class="ft-plus-circle"></i> Tambah Pinjaman
 					</button>
@@ -20,7 +20,7 @@
 							<th>Jumlah Pinjaman</th>
 							<th>Status Pinjaman</th>
 							<th>Deskripsi Pinjaman</th>
-							<?php if ($this->session->userdata('session_hak_akses') != 'owner') : ?>
+							<?php if ($this->session->userdata('session_hak_akses') != 'owner' && $this->session->userdata('session_hak_akses') != 'koordinator') : ?>
 								<td style="text-align: center"><i class="ft-settings spinner"></i></td>
 							<?php endif; ?>
 						</tr>
@@ -38,7 +38,7 @@
 								<td><?= nominal($value['pinjaman_jumlah']) ?></td>
 								<td><?= $value['pinjaman_status'] ?></td>
 								<td><?= $value['pinjaman_deskripsi'] ?></td>
-								<?php if ($this->session->userdata('session_hak_akses') == 'manajer' && $value['pinjaman_status'] == 'proses') : ?>
+								<?php if ($this->session->userdata('session_hak_akses') == 'pimpinan' && $value['pinjaman_status'] == 'proses') : ?>
 									<td>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-blue-green box-shadow-2 pinjaman-validasi" data-toggle="modal" data-target="#validasi" data-id="<?= $value['pinjaman_id'] ?>"><i class="ft-edit"></i></button>
 									</td>
@@ -46,7 +46,7 @@
 									<td>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-blue-green box-shadow-2 pinjaman-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['pinjaman_id'] ?>"><i class="ft-edit"></i></button>
 									</td>
-								<?php elseif ($this->session->userdata('session_hak_akses') != 'owner') : ?>
+								<?php elseif ($this->session->userdata('session_hak_akses') != 'owner' && $this->session->userdata('session_hak_akses') != 'koordinator') : ?>
 									<td>
 										<button class="btn btn-success btn-sm" disabled><i class="ft-edit"></i></button>
 									</td>

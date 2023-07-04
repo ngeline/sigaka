@@ -17,7 +17,7 @@
 						<input type="month" class="form-control storting-month-picker" value="<?= $date_set ?>">
 					</div>
 					<div class="col-sm-9">
-						<?php if ($this->session->userdata('session_hak_akses') == 'karyawan') : ?>
+						<?php if ($this->session->userdata('session_hak_akses') == 'karyawan' && $this->session->userdata('session_karyawan_status') != 'kasir') : ?>
 							<?= form_open('storting/kemacetan-store') ?>
 							<input type="hidden" name="kemacetan_date" value="<?= $date_set ?>">
 							<div class="row">
@@ -98,7 +98,7 @@
 								<th>Total Angsuran</th>
 								<th>Total Angsuran Hutang</th>
 								<th>Total Kemacetan</th>
-								<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+								<?php if ($this->session->userdata('session_hak_akses') == 'pimpinan') : ?>
 									<td style="text-align: center"><i class="ft-settings spinner"></i></td>
 								<?php endif; ?>
 							</tr>
@@ -117,7 +117,7 @@
 									<td><?= $value['total_angsuran'] ? nominal($value['total_angsuran']) : '-' ?></td>
 									<td><?= $value['total_angsuran_hutang'] ? nominal($value['total_angsuran_hutang']) : '-' ?></td>
 									<td><?= $value['kemacetan_jumlah'] ? nominal($value['kemacetan_jumlah']) : '-' ?></td>
-									<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+									<?php if ($this->session->userdata('session_hak_akses') == 'pimpinan') : ?>
 										<td>
 											<button type="button" class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 storting-riwayat-show" data-id="<?= $value['karyawan_id'] ?>" title="Lihat riwayat"><i class="ft-eye"></i></button>
 										</td>

@@ -16,16 +16,22 @@
 					<input type="hidden" class="form-control storting-riwayat-month-picker" value="<?= $date_set ?>">
 					<!-- </div> -->
 					<div class="col-md-3 mb-2 pl-2">
-						<?php if ($kemacetan->kemacetan_status == 'pending') : ?>
+						<?php if (!empty($kemacetan) && $kemacetan->kemacetan_status == 'pending') : ?>
 							<label><span class="badge badge-sm badge-danger"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
-						<?php else : ?>
+						<?php elseif (!empty($kemacetan) && $kemacetan->kemacetan_status == 'tervalidasi') : ?>
 							<label><span class="badge badge-sm badge-success"><?= $kemacetan->kemacetan_status ?></span> | Total Kemacetan Bulan Ini</label>
+						<?php else : ?>
+							<label><span class="badge badge-sm badge-warning">belum Input</span> | Total Kemacetan Bulan Ini</label>
 						<?php endif; ?>
 						<input type="number" class="form-control" name="kemacetan" id="edit_total_kemacetan" placeholder="Masukkan jumlah kemacetan" value="<?= $kemacetan ? $kemacetan->kemacetan_jumlah : '' ?>" autocomplete="off" readonly required>
 					</div>
 					<div class="col-md-5 mb-2">
 						<div class="btn-group mt-1 pt-1">
-							<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2 btn-validasi-status-kemacetan" title="Validasi kemacetan"><i class="ft-check"></i></button>
+							<?php if (!empty($kemacetan)) : ?>
+								<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2 btn-validasi-status-kemacetan" title="Validasi kemacetan"><i class="ft-check"></i></button>
+							<?php else : ?>
+								<button type="button" class="btn btn-success btn-md btn-bg-gradient-x-blue-green box-shadow-2" title="Validasi kemacetan" disabled><i class="ft-check"></i></button>
+							<?php endif; ?>
 						</div>
 					</div>
 					<div class="col-md-4 text-right mb-2 pr-2">

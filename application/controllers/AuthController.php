@@ -43,6 +43,9 @@ class AuthController extends CI_Controller
 					$data_karyawan = $this->KaryawanModel->get_karyawan_id($pengguna['pengguna_id']);
 					$session['session_karyawan_id'] = $data_karyawan['karyawan_id'];
 					$session['session_karyawan_status'] = $data_karyawan['karyawan_status'];
+				} else {
+					$session['session_karyawan_id'] = null;
+					$session['session_karyawan_status'] = null;
 				}
 
 				$this->session->set_flashdata('alert', 'login_sukses');

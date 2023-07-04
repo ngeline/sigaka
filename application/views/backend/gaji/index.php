@@ -4,9 +4,8 @@
 			<div class="card-header">
 				<h1 style="text-align: center">Data Gaji</h1>
 			</div>
-
 			<div class="card-body d-print-none">
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+				<?php if ($this->session->userdata('session_karyawan_status') == 'kasir' || $this->session->userdata('session_karyawan_status') == null) : ?>
 					<div class="row">
 						<div class="col-sm-3 mb-2">
 							<label class="text-danger" style="font-size: 10pt;">*) Pilih untuk filter gaji</label>
@@ -41,17 +40,17 @@
 								<td><?= $value['gaji_total'] ? nominal($value['gaji_total']) : '-' ?></td>
 								<td><?= $value['gaji_status'] ? $value['gaji_status'] : '-' ?></td>
 								<td>
-									<?php if ($value['gaji_status'] == 'terbayar' && $this->session->userdata('session_hak_akses') == 'manajer') : ?>
+									<?php if ($value['gaji_status'] == 'terbayar' && $this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-slip" data-toggle="modal" data-target="#slip" data-id="<?= $value['karyawan_id'] ?>" title="Cetak slip"><i class="ft-printer"></i></button>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
-									<?php elseif (empty($value['gaji_total']) && $this->session->userdata('session_hak_akses') == 'manajer') : ?>
+									<?php elseif (empty($value['gaji_total']) && $this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 										<button class="btn btn-danger btn-sm  btn-bg-gradient-x-red-pink box-shadow-2 gaji-hitung" data-id="<?= $value['karyawan_id'] ?>" data-status="<?= $value['karyawan_status'] ?>" title="Hitung gaji"><i class="ft-briefcase"></i></button>
-									<?php elseif ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+									<?php elseif ($this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-blue-green box-shadow-2 gaji-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['karyawan_id'] ?>" title="Edit gaji"><i class="ft-edit"></i></button>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
-									<?php elseif (!empty($value['gaji_total']) && $this->session->userdata('session_hak_akses') == 'owner') : ?>
+									<?php elseif (!empty($value['gaji_total']) && $this->session->userdata('session_karyawan_status') == null) : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['karyawan_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
-									<?php elseif (!empty($value['gaji_total']) && $this->session->has_userdata('session_karyawan_id')) : ?>
+									<?php elseif (!empty($value['gaji_total']) && $this->session->userdata('session_karyawan_status') != 'kasir' && $this->session->userdata('session_karyawan_status') != null) : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" data-toggle="modal" data-target="#detail" data-id="<?= $value['gaji_id'] ?>" title="Detail gaji"><i class="ft-eye"></i></button>
 									<?php else : ?>
 										<button class="btn btn-success btn-sm btn-bg-gradient-x-purple-blue box-shadow-2 gaji-show" title="Detail gaji" disabled><i class="ft-eye"></i></button>

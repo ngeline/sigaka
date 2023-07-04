@@ -5,11 +5,11 @@
 				<h1 style="text-align: center">Data Laporan</h1>
 			</div>
 			<div class="card-body">
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+				<?php if ($this->session->userdata('session_karyawan_status') == 'kasir' || $this->session->userdata('session_hak_akses') == 'owner') : ?>
 					<div class="row">
 						<div class="col-sm-3 mb-2">
 							<label class="text-danger" style="font-size: 10pt;">*) Pilih untuk filter laporan</label>
-							<input type="month" class="form-control gaji-month-picker" value="<?= $date_set ?>">
+							<input type="month" class="form-control laporan-month-picker" value="<?= $date_set ?>">
 						</div>
 						<div class="col-sm-2 mb-2">
 							<label for="laporan-btn-lihat" style="color: white">&nbsp;</label>

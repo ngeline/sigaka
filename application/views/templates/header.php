@@ -99,7 +99,6 @@
 	</nav>
 	<!-- END: Header-->
 
-
 	<!-- BEGIN: Main Menu-->
 	<div class="main-menu menu-fixed menu-light menu-accordion d-print-none menu-shadow " data-scroll-to-active="true" data-img="<?= base_url() ?>assets/images/backgrounds/02.jpg">
 		<div class="navbar-header">
@@ -116,7 +115,7 @@
 			<ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
 				<li class=" nav-item <?php if ($this->uri->segment(1) == 'dashboard') echo 'active' ?>"><a href="<?= base_url('dashboard') ?>"><i class="ft-home"></i><span class="menu-title" data-i18n="">Dashboard</span></a>
 				</li>
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+				<?php if ($this->session->userdata('session_karyawan_status') == 'kasir' || $this->session->userdata('session_karyawan_status') == null) : ?>
 					<li class=" nav-item"><a href="#"><i class="ft-layers"></i><span class="menu-title" data-i18n="">Data Master</span></a>
 						<ul class="menu-content">
 							<li class="<?php if ($this->uri->segment(1) == 'karyawan') echo 'active' ?>"><a class="menu-item" href="<?= base_url('karyawan') ?>"><i class="ft-users"> </i> Data
@@ -128,16 +127,20 @@
 					</li>
 					<li class=" nav-item"><a href="#"><i class="ft-layers"></i><span class="menu-title" data-i18n="">Data Potongan</span></a>
 						<ul class="menu-content">
-							<li class="<?php if ($this->uri->segment(1) == 'potongan_gaji') echo 'active' ?>"><a class="menu-item" href="<?= base_url('potongan_gaji') ?>"><i class="icon-wallet"> </i> Potongan Gaji</a>
-							</li>
-							<li class="<?php if ($this->uri->segment(1) == 'pinjaman') echo 'active' ?>"><a class="menu-item" href="<?= base_url('pinjaman') ?>"><i class="ft-calendar"></i> Pinjaman</a>
-							</li>
+							<?php if ($this->session->userdata('session_hak_akses') != 'pimpinan') : ?>
+								<li class="<?php if ($this->uri->segment(1) == 'potongan_gaji') echo 'active' ?>"><a class="menu-item" href="<?= base_url('potongan_gaji') ?>"><i class="icon-wallet"> </i> Potongan Gaji</a>
+								</li>
+							<?php endif; ?>
+							<?php if ($this->session->userdata('session_hak_akses') != 'koordinator') : ?>
+								<li class="<?php if ($this->uri->segment(1) == 'pinjaman') echo 'active' ?>"><a class="menu-item" href="<?= base_url('pinjaman') ?>"><i class="ft-calendar"></i> Pinjaman</a>
+								</li>
+							<?php endif; ?>
 						</ul>
 					</li>
 				<?php endif; ?>
 				<li class=" nav-item <?php if ($this->uri->segment(1) == 'absensi') echo 'active' ?>"><a href="<?= base_url('absensi') ?>"><i class="ft-user-check"></i><span class="menu-title" data-i18n="">Absensi</span></a>
 				</li>
-				<?php if ($this->session->userdata('session_karyawan_status') != 'rekap tetap' && $this->session->userdata('session_karyawan_status') != 'rekap training') : ?>
+				<?php if ($this->session->userdata('session_karyawan_status') != 'rekap tetap' && $this->session->userdata('session_karyawan_status') != 'rekap training' && $this->session->userdata('session_karyawan_status') != 'kasir') : ?>
 					<li class=" nav-item <?php if ($this->uri->segment(1) == 'storting') echo 'active' ?>"><a href="<?= base_url('storting') ?>"><i class="ft-user-check"></i><span class="menu-title" data-i18n="">Storting</span></a>
 					</li>
 				<?php endif; ?>
@@ -145,13 +148,15 @@
 					<li class=" nav-item <?php if ($this->uri->segment(1) == 'pinjaman') echo 'active' ?>"><a href="<?= base_url('pinjaman') ?>"><i class="ft-calendar"></i><span class="menu-title" data-i18n="">Pinjaman</span></a>
 					</li>
 				<?php endif; ?>
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan' || $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap') : ?>
+				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan' || $this->session->userdata('session_karyawan_status') == 'rekap tetap' || $this->session->userdata('session_karyawan_status') == 'lapangan tetap' || $this->session->userdata('session_karyawan_status') == 'kasir') : ?>
 					<li class=" nav-item <?php if ($this->uri->segment(1) == 'tabungan') echo 'active' ?>"><a href="<?= base_url('tabungan') ?>"><i class="icon-wallet"></i><span class="menu-title" data-i18n="">Tabungan</span></a>
 					</li>
 				<?php endif; ?>
-				<li class=" nav-item <?php if ($this->uri->segment(1) == 'gaji') echo 'active' ?>"><a href="<?= base_url('gaji') ?>"><i class="icon-wallet"></i><span class="menu-title" data-i18n="">Gaji</span></a>
-				</li>
-				<?php if ($this->session->userdata('session_hak_akses') != 'karyawan') : ?>
+				<?php if ($this->session->userdata('session_hak_akses') != 'pimpinan') : ?>
+					<li class=" nav-item <?php if ($this->uri->segment(1) == 'gaji') echo 'active' ?>"><a href="<?= base_url('gaji') ?>"><i class="icon-wallet"></i><span class="menu-title" data-i18n="">Gaji</span></a>
+					</li>
+				<?php endif; ?>
+				<?php if ($this->session->userdata('session_karyawan_status') == 'kasir' || $this->session->userdata('session_hak_akses') == 'owner') : ?>
 					<li class=" nav-item"><a href="<?= base_url('laporan') ?>"><i class="ft-file"></i><span class="menu-title" data-i18n="">Laporan</span></a>
 					</li>
 				<?php endif; ?>

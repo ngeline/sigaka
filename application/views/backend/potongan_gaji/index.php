@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h1 style="text-align: center">Data Potongan Gaji</h1>
-				<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+				<?php if ($this->session->userdata('session_hak_akses') == 'koordinator') : ?>
 					<button type="button" class="btn btn-primary btn-bg-gradient-x-purple-blue box-shadow-2" data-toggle="modal" data-target="#tambah">
 						<i class="ft-plus-circle"></i> Tambah Potongan
 					</button>
@@ -18,7 +18,7 @@
 							<th>Nama Potongan</th>
 							<th>Jumlah Potongan</th>
 							<th>Keterangan Potongan</th>
-							<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+							<?php if ($this->session->userdata('session_hak_akses') == 'koordinator') : ?>
 								<td style="text-align: center"><i class="ft-settings spinner"></i></td>
 							<?php endif; ?>
 						</tr>
@@ -33,7 +33,7 @@
 								<td><?= $value['potongan_nama'] ?></td>
 								<td><?= nominal($value['potongan_jumlah']) ?></td>
 								<td><?= $value['potongan_keterangan'] ?></td>
-								<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+								<?php if ($this->session->userdata('session_hak_akses') == 'koordinator') : ?>
 									<td>
 										<button class="btn btn-success btn-sm  btn-bg-gradient-x-blue-green box-shadow-2 potongan-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['potongan_id'] ?>"><i class="ft-edit"></i></button>
 										<button class="btn btn-danger btn-sm  btn-bg-gradient-x-red-pink box-shadow-2 potongan-delete" data-id="<?= $value['potongan_id'] ?>"><i class="ft-trash"></i></button>

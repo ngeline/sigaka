@@ -3,7 +3,7 @@
 		<div class="card box-shadow-2">
 			<div class="card-header">
 				<h1 style="text-align: center">Data Karyawan</h1>
-				<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+				<?php if ($this->session->userdata('session_hak_akses') == 'pimpinan') : ?>
 					<button type="button" class="btn btn-primary btn-bg-gradient-x-purple-blue box-shadow-2" data-toggle="modal" data-target="#bootstrap">
 						<i class="ft-plus-circle"></i> Tambah data karyawan
 					</button>
@@ -36,7 +36,7 @@
 								<td><?= $value['karyawan_status'] ?></td>
 								<td>
 									<button class="btn btn-success btn-sm  btn-bg-gradient-x-purple-blue box-shadow-2 karyawan-show" data-toggle="modal" data-target="#lihat" data-id="<?= $value['karyawan_id'] ?>" title="Lihat selengkapnya"><i class="ft-eye"></i></button>
-									<?php if ($this->session->userdata('session_hak_akses') == 'manajer') : ?>
+									<?php if ($this->session->userdata('session_hak_akses') == 'pimpinan') : ?>
 										<button class="btn btn-success btn-sm  btn-bg-gradient-x-blue-green box-shadow-2 karyawan-edit" data-toggle="modal" data-target="#ubah" data-id="<?= $value['karyawan_id'] ?>" title="Update data karyawan"><i class="ft-edit"></i></button>
 										<button class="btn btn-danger btn-sm  btn-bg-gradient-x-red-pink box-shadow-2 karyawan-delete" data-id-karyawan="<?= $value['karyawan_id'] ?>" data-id-pengguna="<?= $value['pengguna_id'] ?>" title="Hapus data karyawan"><i class="ft-trash"></i></button>
 									<?php endif; ?>
@@ -78,6 +78,7 @@
 						<option value="rekap training">Rekap training</option>
 						<option value="lapangan tetap">Lapangan tetap</option>
 						<option value="lapangan training">Lapangan training</option>
+						<option value="kasir">Kasir</option>
 					</select>
 				</fieldset>
 				<fieldset class="form-group floating-label-form-group">
@@ -226,6 +227,7 @@
 						<option value="rekap training">Rekap training</option>
 						<option value="lapangan tetap">Lapangan tetap</option>
 						<option value="lapangan training">Lapangan training</option>
+						<option value="kasir">Kasir</option>
 					</select>
 				</fieldset>
 				<fieldset class="form-group floating-label-form-group">

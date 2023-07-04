@@ -25,7 +25,7 @@ class AbsensiController extends CI_Controller
 		$month_set = $get_data ? explode('-', $get_data) : explode('-', date('Y-m'));
 
 		$id_karyawan = '';
-		if ($this->session->has_userdata('session_karyawan_id')) {
+		if ($this->session->userdata('session_karyawan_status') != 'kasir' && $this->session->userdata('session_karyawan_status') != null) {
 			$id_karyawan = $this->session->userdata('session_karyawan_id');
 		}
 

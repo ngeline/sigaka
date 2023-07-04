@@ -17,6 +17,7 @@ class GajiController extends CI_Controller
 		}
 	}
 
+	// rekap + kasir
 	private function hitung_gaji_rekap($id_karyawan, $month)
 	{
 		$month_set = explode('-', $month);
@@ -31,6 +32,10 @@ class GajiController extends CI_Controller
 
 			case 'rekap tetap':
 				$gaji_pokok = 1150000;
+				break;
+
+			case 'kasir':
+				$gaji_pokok = 1400000;
 				break;
 
 			default:
@@ -168,7 +173,7 @@ class GajiController extends CI_Controller
 		$month_set = $get_data ? explode('-', $get_data) : explode('-', date('Y-m'));
 
 		$id_karyawan = '';
-		if ($this->session->has_userdata('session_karyawan_id')) {
+		if ($this->session->userdata('session_karyawan_status') != 'kasir' && $this->session->userdata('session_karyawan_status') != null) {
 			$id_karyawan = $this->session->userdata('session_karyawan_id');
 		}
 
@@ -187,7 +192,7 @@ class GajiController extends CI_Controller
 
 	public function hitung($id_karyawan, $month, $status)
 	{
-		if ($status == 'rekap%20training' || $status == 'rekap%20tetap') {
+		if ($status == 'rekap%20training' || $status == 'rekap%20tetap' || $status == 'kasir') {
 			$data = $this->hitung_gaji_rekap($id_karyawan, $month);
 		} elseif ($status == 'lapangan%20training' || $status == 'lapangan%20tetap') {
 			$data = $this->hitung_gaji_lapangan($id_karyawan, $month);
@@ -206,7 +211,7 @@ class GajiController extends CI_Controller
 
 		try {
 
-			if ($data_get['karyawan_status'] == 'rekap training' || $data_get['karyawan_status'] == 'rekap tetap') {
+			if ($data_get['karyawan_status'] == 'rekap training' || $data_get['karyawan_status'] == 'rekap tetap' || $data_get['karyawan_status'] == 'kasir') {
 				$data_hitung_rekap = $this->hitung_gaji_rekap($data_get['karyawan_id'], $data_get['month_set']);
 				$values_add = [$data_hitung_rekap['gaji_pokok'], $data_hitung_rekap['uang_makan'], $data_hitung_rekap['uang_transport']];
 				$values_subtract = [];
