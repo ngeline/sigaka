@@ -24,6 +24,7 @@ class AbsensiModel extends CI_Model
 		}
 		
 		$this->db->where('karyawan_date_deleted', null);
+		$this->db->where("DATE_FORMAT(karyawan_tanggal_gabung, '%Y-%m') <=", "{$bulan[0]}-{$bulan[1]}");
 		$this->db->order_by('karyawan_date_created', 'DESC');
 		$this->db->order_by('karyawan_date_updated', 'DESC');
 

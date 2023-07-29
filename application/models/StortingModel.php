@@ -19,6 +19,7 @@ class StortingModel extends CI_Model
 		$this->db->where('storting_bulan_ke', $bulan[1]);
 		$this->db->where('storting_tahun_ke', $bulan[0]);
 		$this->db->where('storting_karyawan_id', $id_karyawan);
+		$this->db->where("DATE_FORMAT(karyawan_tanggal_gabung, '%Y-%m') <=", "{$bulan[0]}-{$bulan[1]}");
 		$this->db->order_by('storting_date_created', 'DESC');
 		$this->db->order_by('storting_date_updated', 'DESC');
 
@@ -48,6 +49,7 @@ class StortingModel extends CI_Model
 		$this->db->where('karyawan_status', 'lapangan tetap');
 		$this->db->or_where('karyawan_status', 'lapangan training');
 		$this->db->where('karyawan_date_deleted', null);
+		$this->db->where("DATE_FORMAT(karyawan_tanggal_gabung, '%Y-%m') <=", "{$bulan[0]}-{$bulan[1]}");
 		$this->db->group_by('karyawan_nama, storting_bulan_ke, storting_tahun_ke, karyawan_date_created, karyawan_date_updated, kemacetan_jumlah, karyawan_id');
 		$this->db->order_by('karyawan_date_created', 'DESC');
 		$this->db->order_by('karyawan_date_updated', 'DESC');

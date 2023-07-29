@@ -45,7 +45,7 @@ class KaryawanController extends CI_Controller
 			[
 				'field' => 'tanggal_lahir',
 				'label' => 'Tanggal Lahir',
-				'rules' => 'required'
+				'rules' => 'required|callback_check_usia'
 			],
 			[
 				'field' => 'alamat',
@@ -80,6 +80,23 @@ class KaryawanController extends CI_Controller
 		$this->load->view('templates/header', $data);
 		$this->load->view('backend/karyawan/index', $data);
 		$this->load->view('templates/footer');
+	}
+
+	public function check_usia($tanggal_lahir)
+	{
+		// Ubah format tanggal dari input ke format Y-m-d
+		$tanggal_lahir = date('Y-m-d', strtotime($tanggal_lahir));
+
+		// Hitung usia berdasarkan tanggal lahir
+		$usia = date_diff(date_create($tanggal_lahir), date_create('today'))->y;
+
+		// Cek apakah usia kurang dari 17 tahun
+		if ($usia < 18) {
+			$this->form_validation->set_message('check_usia', 'Usia tidak boleh kurang dari 18 tahun.');
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 	public function check_unique($value)
